@@ -51,10 +51,15 @@ AppAsset::register($this);
                 <?php if(!Yii::$app->user->isGuest) { ?>
 
                     <form class="d-flex">
-                        <button class="btn btn-outline-dark" type="submit">
+                        <button class="button-signup btn btn-outline-dark" type="submit">
                             <i class="bi-cart-fill me-1"></i>
-                            Cart
+                            <a class="a-signup">Cart</a>
                             <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                        </button>
+
+                        <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
+                            <i class="bi-person"></i>
+                            <a class="a-signin" href="/account/index"><?= Yii::$app->user->identity->username ?></a>
                         </button>
                     </form>
                     
@@ -93,10 +98,6 @@ AppAsset::register($this);
             <p class="m-0 text-center text-white">Copyright &copy; Delta Shop 2023 </p>
         </div>
     </footer>
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
 
     <?php $this->endBody() ?>
 </body>

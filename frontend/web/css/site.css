@@ -20,10 +20,19 @@ footer {
 .a-signin {
     color: white; 
     text-decoration:none;
+    background-color:inherit;
 }
 
 .button-signin:hover a {
     color:black;
+}
+
+.button-signin:hover i {
+    color:black;
+}
+
+.button-signin i {
+    color:white;
 }
 
 .button-signin:hover {
