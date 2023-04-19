@@ -1,17 +1,25 @@
-function getAccount(type) {
-    var received_data = null;
+function getAccount(type, callback) {
     $.ajax({
-        url: '/api/get-account',
+        url: '/account/get-account',
         method: 'GET',
         data: {type: type},
         success: function(data) {
-            received_data = data;
-            console.log(data);
+            callback(data);
         },
         error: function(xhr, status, error) {
             console.error(xhr); // handle error response
         }
     });
-
-    return received_data;
 }
+
+
+function user_logout(){
+    $.ajax({
+        url: '/site/logout',
+        type: 'POST',
+        success: function(data) {
+            location.reload();
+        }
+    });
+}
+

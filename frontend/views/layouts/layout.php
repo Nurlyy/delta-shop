@@ -66,16 +66,17 @@ AppAsset::register($this);
                 <?php } else { ?>
                     <!-- <form class="d-flex"> -->
                         <button class="button-signup btn btn-outline-dark" type="submit">
-                            <a class="a-signup" href="/site/signup">Sign Up</a>
+                            <a class="a-signup" href="/site/signup">Зарегистрироваться</a>
                         </button>
                         <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
-                            <a class="a-signin" href="/site/login">Sign In</a>
+                            <a class="a-signin" href="/site/login">Войти</a>
                         </button>
                     <!-- </form> -->
                 <?php } ?>
             </div>
         </div>
     </nav>
+    <div class="container" style="padding: 0; padding-bottom: 80px;">
     <!-- Header-->
     <!-- <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
@@ -92,9 +93,10 @@ AppAsset::register($this);
 
             <!-- <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> -->
 
+                </div>
     <!-- Footer-->
-    <footer class="py-5 bg-dark">
-        <div class="container">
+    <footer class="bg-dark">
+        <div class="container m-3">
             <p class="m-0 text-center text-white">Copyright &copy; Delta Shop 2023 </p>
         </div>
     </footer>
