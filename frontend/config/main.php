@@ -41,6 +41,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'product/<product_id:\w+>' => 'product/product',    
             ],
         ],
         
