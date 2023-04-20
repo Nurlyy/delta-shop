@@ -1,6 +1,5 @@
 <?php
 
-
 switch ($type) {
     case 1:
 ?>
@@ -11,10 +10,9 @@ switch ($type) {
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <form>
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" value="<?= Yii::$app->user->identity->username ?>" placeholder="Enter your name">
+                                <label for="username">Name</label>
+                                <input type="text" class="form-control" id="username" value="<?= Yii::$app->user->identity->username ?>" placeholder="Enter your name">
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
@@ -25,8 +23,7 @@ switch ($type) {
                                 <input disabled type="tel" class="form-control" id="phone" value="<?= Yii::$app->user->identity->phone ?>" placeholder="Enter your phone number">
                             </div>
 
-                            <button type="submit" class="btn btn-primary mt-3">Save changes</button>
-                        </form>
+                            <button onclick="change_main_information()" type="submit" class="btn btn-primary mt-3">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -45,30 +42,28 @@ switch ($type) {
                         <div class="col-6 mt-3">
                             <div class="card card-body">
                                 <div class="col-md-12">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="name">Country</label>
-                                            <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="country_<?= $address->id ?>" value="<?= $address->country ?>" placeholder="Country name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">State</label>
-                                            <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="state_<?= $address->id ?>" value="<?= $address->state ?>" placeholder="State name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="phone">City</label>
-                                            <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="city_<?= $address->id ?>" value="<?= $address->city ?>" placeholder="City name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="phone">Street</label>
-                                            <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="street_<?= $address->id ?>" value="<?= $address->street ?>" placeholder="Street name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="phone">Building</label>
-                                            <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="building_<?= $address->id ?>" value="<?= $address->building ?>" placeholder="Building number or name">
-                                        </div>
-                                        <button onclick="save_address($address->id)" type="submit" id="btn_create_new_address_<?= $address->id ?>" class="btn btn-primary mt-3">Save changes</button>
-                                        <button onclick="delete_address($address->id)" type="submit" id="btn_delete_address_<?= $address->id ?>" class="btn btn-danger mt-3">Delete</button>
-                                    </form>
+                                    <div class="form-group">
+                                        <label for="name">Country</label>
+                                        <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="country_<?= $address->id ?>" value="<?= $address->country ?>" placeholder="Country name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">State</label>
+                                        <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="state_<?= $address->id ?>" value="<?= $address->state ?>" placeholder="State name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">City</label>
+                                        <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="city_<?= $address->id ?>" value="<?= $address->city ?>" placeholder="City name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Street</label>
+                                        <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="street_<?= $address->id ?>" value="<?= $address->street ?>" placeholder="Street name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Building</label>
+                                        <input onchange="inputchanged(<?= $address->id ?>);" type="text" class="form-control" id="building_<?= $address->id ?>" value="<?= $address->building ?>" placeholder="Building number or name">
+                                    </div>
+                                    <button onclick="save_address(<?= $address->id ?>)" type="submit" id="btn_create_new_address_<?= $address->id ?>" class="btn btn-primary mt-3">Save changes</button>
+                                    <button onclick="delete_address(<?= $address->id ?>)" id="btn_delete_address_<?= $address->id ?>" class="btn btn-danger mt-3">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -112,6 +107,9 @@ switch ($type) {
 
 ?>
 <script>
+    var addresses = <?= json_encode($addresses) ?>;
+    console.log(addresses);
+
     function inputchanged(id) {
         if ($('#street_' + id).val().length > 0 && $('#building_' + id).val().length > 0 && $('#city_' + id).val().length > 0 && $('#state_' + id).val().length > 0 && $('#country_' + id).val().length > 0) {
             $('#btn_save_address_' + id).prop("disabled", false);
@@ -126,7 +124,7 @@ switch ($type) {
         street = $('#street_' + id).val();
         building = $('#building_' + id).val();
 
-        console.log({
+        data = {
             Address: {
                 country: country,
                 state: state,
@@ -134,20 +132,18 @@ switch ($type) {
                 street: street,
                 building: building
             }
-        });
+        };
+
+        if(Number.isInteger(id)){
+            data['Address']['id'] = id;
+        }
+
+        console.log(data);
 
         $.ajax({
             url: '/account/save-address',
             type: "POST",
-            data: {
-                Address: {
-                    country: country,
-                    state: state,
-                    city: city,
-                    street: street,
-                    building: building
-                }
-            },
+            data: data,
             success: function(data) {
                 // location.reload();
                 console.log(data);
@@ -170,6 +166,21 @@ switch ($type) {
                 // location.reload();
             },
             error: function(xhr, status, error) {
+                console.log(xhr);
+            }
+        });
+    }
+
+    function change_main_information(){
+        username = $('#username').val();
+        $.ajax({
+            url: '/account/change-name',
+            type: 'POST',
+            data: {username: username, id:<?= Yii::$app->user->id ?>},
+            success: function(data){
+                location.reload();
+            },
+            error: function(xhr, status ,error){
                 console.log(xhr);
             }
         });
