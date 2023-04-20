@@ -8,19 +8,25 @@
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
             <div class="col-md-6">
+
                 <h1 class="display-5 fw-bolder"><?= $product->product_name ?></h1>
                 <div class="fs-5 mb-5">
                     <!-- <span class="text-decoration-line-through">$1888</span> -->
                     <span>$<?= $product->price ?></span>
                 </div>
+                <div class="fs-5 mb-5">
+                    <!-- <span class="text-decoration-line-through">$1888</span> -->
+                    <span>In stock: <?= $product->count ?> pcs.</span>
+                </div>
                 <p class="lead"><?= $product->description ?></p>
                 <div class="d-flex">
                     <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                    <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                    <button onclick="add_to_cart()" class="btn btn-outline-dark flex-shrink-0" type="button">
                         <i class="bi-cart-fill me-1"></i>
                         Add to cart
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -131,3 +137,69 @@
         </div>
     </div>
 </section>
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">   
+        <h2>Product Reviews</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Great Product!</h4>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Posted on January 1, 2023</small>
+                                <div class="rating-stars">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
+                                </div>
+                            </div>
+                            <p class="card-text">I recently bought this product and it's amazing! It does exactly what it's supposed to do and more. I highly recommend it.</p>
+                            <p class="card-text"><small class="text-muted">- John Smith</small></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Not Impressed</h4>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Posted on January 2, 2023</small>
+                                <div class="rating-stars">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                </div>
+                            </div>
+                            <p class="card-text">I was really disappointed with this product. It didn't live up to my expectations at all.</p>
+                            <p class="card-text"><small class="text-muted">- Jane Doe</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+    function add_to_cart() {
+        quantity = $('#inputQuantity').val();
+        $.ajax({
+            url: '/cart/add-to-cart',
+            type: 'POST',
+            data: {
+                product_id: <?= $product->product_id ?>,
+                product_quantity: quantity
+            },
+            success: function(data) {
+                get_cart_count();
+                // console.log(data);
+            }
+        });
+    }
+</script>

@@ -18,6 +18,7 @@ use frontend\models\ContactForm;
 use common\models\Products;
 use yii\data\Pagination;
 use common\models\Categories;
+use common\models\Images;
 use common\models\Subcategories;
 
 /**
@@ -87,11 +88,17 @@ class SiteController extends Controller
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
         $models = $query->offset($pages->offset)->limit($pages->limit)->all();
-
+        $images = [];
+        foreach($models as $model) {
+            $temp_images = Images::find()->where(['prod_id' => $model->product_id])->all();
+            if(!empty($temp_images)){
+                $images[$model->product_id] = $temp_images;
+            }
+        }
         $categories = Categories::find()->all();
         $subcategories = Subcategories::find()->all();
 
-        return $this->render('index', ['models' => $models, 'pages' => $pages, 'categories' => $categories, 'subcategories' => $subcategories]);
+        return $this->render('index', ['images'=>$images, 'models' => $models, 'pages' => $pages, 'categories' => $categories, 'subcategories' => $subcategories]);
     }
 
     public function actionGetSubcategories($category_id){

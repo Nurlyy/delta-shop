@@ -22,4 +22,3 @@ function user_logout(){
         }
     });
 }
-

@@ -49,7 +49,7 @@ $this->title = 'My Yii Application';
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="<?= "/assets/images/placeholder.png" ?>" alt="..." />
+                        <img class="card-img-top" src="<?= isset($images[$model->product_id]) ? $images[$model->product_id][0] : "/assets/images/placeholder.png" ?>" alt="..." />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">

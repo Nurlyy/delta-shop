@@ -53,8 +53,8 @@ AppAsset::register($this);
                     <form class="d-flex">
                         <button class="button-signup btn btn-outline-dark" type="submit">
                             <i class="bi-cart-fill me-1"></i>
-                            <a class="a-signup">Cart</a>
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                            <a href="/cart/" class="a-signup">Cart</a>
+                            <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_count">0</span>
                         </button>
 
                         <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
@@ -102,6 +102,23 @@ AppAsset::register($this);
     </footer>
 
     <?php $this->endBody() ?>
+
+    <script>
+        function get_cart_count(){
+            $.ajax({
+                url: '/api/get-cart-count',
+                method: "GET",
+                data: {},
+                success: function(data){
+                    document.getElementById('cart_count').innerHTML = data
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            get_cart_count();
+        });
+        
+    </script>
 </body>
 
 </html>
