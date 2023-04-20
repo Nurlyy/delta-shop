@@ -14,7 +14,7 @@ use Yii;
  * @property int $characteristics_id
  * @property int $price
  * @property int $count
- * @property int $image
+ * @property int $description
  *
  * @property Characteristics $characteristics
  * @property Manufacturers $manufacturer
@@ -44,7 +44,7 @@ class Products extends \yii\db\ActiveRecord
             [['rubrik_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rubrik::class, 'targetAttribute' => ['rubrik_id' => 'rubrik_id']],
             [['manufacturer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Manufacturers::class, 'targetAttribute' => ['manufacturer_id' => 'manufacturer_id']],
             [['characteristics_id'], 'exist', 'skipOnError' => true, 'targetClass' => Characteristics::class, 'targetAttribute' => ['characteristics_id' => 'characteristics_id']],
-            [['image'], 'string', 'max' => 512],
+            [['description'], 'text'],
         ];
     }
 
@@ -61,7 +61,7 @@ class Products extends \yii\db\ActiveRecord
             'characteristics_id' => 'Characteristics ID',
             'price' => 'Price',
             'count' => 'Count',
-            'image' => 'Image',
+            'description' => 'Description',
         ];
     }
 

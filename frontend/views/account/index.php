@@ -24,15 +24,19 @@
         </div>
         <div class="col-9">
             <div class="card" id="account-card-changes">
-                
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function get_account(type){
-        response = getAccount(type, function(received_data){
+    document.addEventListener("DOMContentLoaded", function() {
+        get_account(1);
+    });
+
+    function get_account(type) {
+        response = getAccount(type, function(received_data) {
             $('#account-card-changes').html(received_data);
         });
     }
