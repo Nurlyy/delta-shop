@@ -7,7 +7,7 @@ use yii\bootstrap5\LinkPager;
 $this->title = 'My Yii Application';
 // var_dump($categories);exit;
 ?>
-<div class="container px-4 px-lg-5 mt-5 ">
+<div class="container ">
 
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
