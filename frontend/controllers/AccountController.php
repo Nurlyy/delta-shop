@@ -7,6 +7,7 @@ use yii\filters\AccessControl;
 use common\models\Address;
 use Yii;
 use common\models\User;
+use DateTime;
 
 class AccountController extends Controller
 {
@@ -93,11 +94,22 @@ class AccountController extends Controller
                 $id = $_POST['id'];
                 if (Yii::$app->user->identity->id = $id) {
                     $user = User::find()->where(['id' => $id])->one();
+                    if(isset($_POST['date_of_birth'])){
+                        $dob = DateTime::createFromFormat('Y-m-d', $_POST['date_of_birth']);
+                        if($dob == null){
+                            return 'false';
+                        }
+                        $user->birth_date = $dob->format('Y-m-d');
+                    }
                     if (isset($_POST['username'])) {
                         $user->username = htmlentities($_POST['username']);
-                        if($user->validate()){
-                            return $user->save();
-                        }
+                    }
+                    if(isset($_POST['sex'])){
+                        // return $user->birth_date;
+                        $user->sex = htmlentities($_POST['sex']);
+                    }
+                    if($user->validate()){
+                        return $user->save();
                     }
                 }
             }

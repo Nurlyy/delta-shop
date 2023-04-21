@@ -18,6 +18,8 @@ use yii\web\IdentityInterface;
  * @property string $verification_token
  * @property string $email
  * @property string $phone
+ * @property date $birth_date
+ * @property int $sex
  * @property string $auth_key
  * @property integer $status
  * @property integer $created_at

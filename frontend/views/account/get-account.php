@@ -10,20 +10,48 @@ switch ($type) {
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="username">Name</label>
-                                <input type="text" class="form-control" id="username" value="<?= Yii::$app->user->identity->username ?>" placeholder="Enter your name">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input disabled type="email" class="form-control" id="email" value="<?= Yii::$app->user->identity->email ?>" placeholder="Enter your email">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input disabled type="tel" class="form-control" id="phone" value="<?= Yii::$app->user->identity->phone ?>" placeholder="Enter your phone number">
-                            </div>
+                        <div class="form-group">
+                            <label for="username">Имя</label>
+                            <input type="text" class="form-control" id="username" value="<?= Yii::$app->user->identity->username ?>" placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input disabled type="email" class="form-control" id="email" value="<?= Yii::$app->user->identity->email ?>" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Номер телефона</label>
+                            <input disabled type="tel" class="form-control" id="phone" value="<?= Yii::$app->user->identity->phone ?>" placeholder="Enter your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Дата рождения</label>
+                            <input type="date" class="form-control" id="dob" name="dob" value="<?= Yii::$app->user->identity->birth_date ?>">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="userSex">Выберите пол</label>
+                            <select class="form-select" id="userSex" name="userSex" required>
+                                <option <?php if(Yii::$app->user->identity->sex == 3){echo "selected";} ?> value="3">Другой</option>
+                                <option <?php if(Yii::$app->user->identity->sex == 1){echo "selected";} ?> value="1">Мужской</option>
+                                <option <?php if(Yii::$app->user->identity->sex == 2){echo "selected";} ?> value="2">Женский</option>
+                            </select>
+                        </div>
 
-                            <button onclick="change_main_information()" type="submit" class="btn btn-primary mt-3">Save changes</button>
+                        <script>
+                            $(document).ready(function() {
+                                // Get the dropdown button element
+                                var dropdownButton = $('#sexDropdown');
+
+                                // Attach a click event handler to the dropdown items
+                                $('.dropdown-item').click(function() {
+                                    // Get the text of the clicked item
+                                    var selectedText = $(this).text();
+
+                                    // Set the button text to the selected text
+                                    dropdownButton.text(selectedText);
+                                });
+                            });
+                        </script>
+
+                        <button onclick="change_main_information()" type="submit" class="btn btn-success mt-3">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -101,8 +129,11 @@ switch ($type) {
                 </div>
             </div>
         </div>
+        <?php
+        break; ?>
+
+
 <?php
-        break;
 }
 
 ?>
@@ -134,7 +165,7 @@ switch ($type) {
             }
         };
 
-        if(Number.isInteger(id)){
+        if (Number.isInteger(id)) {
             data['Address']['id'] = id;
         }
 
@@ -171,16 +202,26 @@ switch ($type) {
         });
     }
 
-    function change_main_information(){
+    function change_main_information() {
         username = $('#username').val();
+        data = {
+            sex: $('#userSex').val(),
+            username: username,
+            id: <?= Yii::$app->user->id ?>
+        };
+            
+        if($('#dob').val() != ''){
+            data['date_of_birth'] = $('#dob').val();
+        }
         $.ajax({
             url: '/account/change-name',
             type: 'POST',
-            data: {username: username, id:<?= Yii::$app->user->id ?>},
-            success: function(data){
-                location.reload();
+            data: data,
+            success: function(data) {
+                console.log(data);
+                // location.reload();
             },
-            error: function(xhr, status ,error){
+            error: function(xhr, status, error) {
                 console.log(xhr);
             }
         });

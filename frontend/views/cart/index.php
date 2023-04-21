@@ -10,7 +10,7 @@ $shipping = 0.0
         <div class="col-md-8">
             <h2>Your Cart</h2>
             <ul class="list-group">
-                <?php foreach($products as $product){ 
+                <?php foreach ($products as $product) {
                     $subtotal += $product['price'] * $product['quantity'] ?>
                     <li class="list-group-item">
                         <div class="row">
@@ -70,7 +70,56 @@ $shipping = 0.0
                     </div>
                 </li>
             </ul>
-            <a href="#" class="btn btn-primary btn-block mt-5">Checkout</a>
+            <br>
+            <script src="https://www.paypal.com/sdk/js?client-id=AXzlnn6TIuo2KsvgqI0iZD5h2CZI525YUAvqbzFYTysFwpVJy8hXjfxikPKJ6eNUNysf9FOX1Krcmvrv&currency=USD"></script>
+            <div id="paypal-button-container"></div>
+            <script>
+                paypal.Buttons({
+                    // Order is created on the server and the order id is returned
+                    createOrder() {
+                        return fetch("/my-server/create-paypal-order", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                // use the "body" param to optionally pass additional order information
+                                // like product skus and quantities
+                                body: JSON.stringify({
+                                    cart: [{
+                                        sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+                                        quantity: "YOUR_PRODUCT_QUANTITY",
+                                    }, ],
+                                }),
+                            })
+                            .then((response) => response.json())
+                            .then((order) => order.id);
+                    },
+                    // Finalize the transaction on the server after payer approval
+                    onApprove(data) {
+                        return fetch("/my-server/capture-paypal-order", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    orderID: data.orderID
+                                })
+                            })
+                            .then((response) => response.json())
+                            .then((orderData) => {
+                                // Successful capture! For dev/demo purposes:
+                                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                                const transaction = orderData.purchase_units[0].payments.captures[0];
+                                alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                                // When ready to go live, remove the alert and show a success message within this page. For example:
+                                // const element = document.getElementById('paypal-button-container');
+                                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                                // Or go to another URL:  window.location.href = 'thank_you.html';
+                            });
+                    }
+                }).render('#paypal-button-container');
+            </script>
+            <!-- <a href="#" class="btn btn-primary btn-block mt-5">Checkout</a> -->
         </div>
     </div>
 </div>

@@ -13,7 +13,7 @@
                     Основная информация
                 </button>
                 <button onclick="get_account(2)" type="button" class="list-group-item list-group-item-action">Мои адреса</button>
-                <button onclick="get_account(3)" type="button" class="list-group-item list-group-item-action">Мои карты</button>
+                <button onclick="get_account(3)" type="button" class="list-group-item list-group-item-action">Мои данные</button>
                 <hr>
                 <button onclick="get_account(4)" type="button" class="list-group-item list-group-item-action">Изменить пароль</button>
                 <button onclick="get_account(5)" type="button" class="list-group-item list-group-item-action">Изменить номер телефона</button>

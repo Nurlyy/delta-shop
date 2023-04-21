@@ -9,6 +9,10 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use common\models\CartProduct;
+use common\models\Cart;
+use common\models\Orders;
+use common\models\OrdersProduct;
 
 AppAsset::register($this);
 ?>
@@ -48,9 +52,16 @@ AppAsset::register($this);
                     </li>
                 </ul>
 
-                <?php if(!Yii::$app->user->isGuest) { ?>
+                <?php if (!Yii::$app->user->isGuest) { ?>
 
                     <form class="d-flex">
+                        <?php $order=Orders::find()->where(['customer_id' => Yii::$app->user->id])->one(); if($order != null && OrdersProduct::find()->where(['order_id' => $order->id])->count() > 0){ ?>
+                            <button class="button-signin btn btn-dark btn-outline-dark" style="margin-right:15px;" type="submit">
+                                <i class="bi-box"></i>
+                                <a class="a-signin" href="/account/index">Заказы</a>
+                            </button>
+                        <?php } ?>
+
                         <button class="button-signup btn btn-outline-dark" type="submit">
                             <i class="bi-cart-fill me-1"></i>
                             <a href="/cart/" class="a-signup">Cart</a>
@@ -62,23 +73,23 @@ AppAsset::register($this);
                             <a class="a-signin" href="/account/index"><?= Yii::$app->user->identity->username ?></a>
                         </button>
                     </form>
-                    
+
                 <?php } else { ?>
                     <!-- <form class="d-flex"> -->
-                        <button class="button-signup btn btn-outline-dark" type="submit">
-                            <a class="a-signup" href="/site/signup">Зарегистрироваться</a>
-                        </button>
-                        <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
-                            <a class="a-signin" href="/site/login">Войти</a>
-                        </button>
+                    <button class="button-signup btn btn-outline-dark" type="submit">
+                        <a class="a-signup" href="/site/signup">Зарегистрироваться</a>
+                    </button>
+                    <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
+                        <a class="a-signin" href="/site/login">Войти</a>
+                    </button>
                     <!-- </form> -->
                 <?php } ?>
             </div>
         </div>
     </nav>
     <div class="container" style="padding: 0; padding-bottom: 80px;">
-    <!-- Header-->
-    <!-- <header class="bg-dark py-5">
+        <!-- Header-->
+        <!-- <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">Delta Shop</h1>
@@ -87,13 +98,13 @@ AppAsset::register($this);
         </div>
     </header> -->
 
-    <?= $content ?>
+        <?= $content ?>
 
-    
 
-            <!-- <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> -->
 
-                </div>
+        <!-- <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> -->
+
+    </div>
     <!-- Footer-->
     <footer class="bg-dark">
         <div class="container m-3">
@@ -104,12 +115,12 @@ AppAsset::register($this);
     <?php $this->endBody() ?>
 
     <script>
-        function get_cart_count(){
+        function get_cart_count() {
             $.ajax({
                 url: '/api/get-cart-count',
                 method: "GET",
                 data: {},
-                success: function(data){
+                success: function(data) {
                     document.getElementById('cart_count').innerHTML = data
                 }
             });
@@ -117,7 +128,6 @@ AppAsset::register($this);
         document.addEventListener("DOMContentLoaded", function() {
             get_cart_count();
         });
-        
     </script>
 </body>
 

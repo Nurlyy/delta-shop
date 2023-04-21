@@ -138,9 +138,9 @@
     </div>
 </section>
 
-<section class="py-5">
+<section class="py-5 bg-light">
     <div class="container px-4 px-lg-5 my-5">   
-        <h2>Product Reviews</h2>
+        <h2 class="fw-bolder mb-4">Product Reviews</h2>
         <div class="row">
             <div class="col-md-8">
                 <div class="card-deck">
@@ -150,28 +150,28 @@
                             <div class="d-flex justify-content-between mb-2">
                                 <small class="text-muted">Posted on January 1, 2023</small>
                                 <div class="rating-stars">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-o"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
                                 </div>
                             </div>
                             <p class="card-text">I recently bought this product and it's amazing! It does exactly what it's supposed to do and more. I highly recommend it.</p>
                             <p class="card-text"><small class="text-muted">- John Smith</small></p>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card mt-3">
                         <div class="card-body">
                             <h4 class="card-title">Not Impressed</h4>
                             <div class="d-flex justify-content-between mb-2">
                                 <small class="text-muted">Posted on January 2, 2023</small>
                                 <div class="rating-stars">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-o"></i>
-                                    <i class="fa fa-star-o"></i>
+                                <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
                                 </div>
                             </div>
                             <p class="card-text">I was really disappointed with this product. It didn't live up to my expectations at all.</p>
