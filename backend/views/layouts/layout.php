@@ -56,13 +56,15 @@ AppAsset::register($this);
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link active" href="#">Главная</a>
+                                <a style="text-decoration:none; color:black;" class="nav-link active" href="/">Главная</a>
                             </li>
+                            <hr>
                             <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link" href="#">Продукты</a>
+                                <a style="text-decoration:none; color:black;" class="nav-link" href="/products">Продукты</a>
                             </li>
+                            <hr>
                             <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link" href="#">Заказы</a>
+                                <a style="text-decoration:none; color:black;" class="nav-link" href="/orders">Заказы</a>
                             </li>
                         </ul>
                     </div>
