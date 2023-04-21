@@ -11,12 +11,9 @@ use Yii;
  * @property string $product_name
  * @property int|null $manufacturer_id
  * @property int|null $rubrik_id
- * @property int $characteristics_id
  * @property int $price
  * @property int $count
  * @property int $description
- *
- * @property Characteristics $characteristics
  * @property Manufacturers $manufacturer
  * @property Orders[] $orders
  * @property OrdersProduct[] $ordersProducts
@@ -38,13 +35,12 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_name', 'characteristics_id', 'price', 'count'], 'required'],
-            [['manufacturer_id', 'rubrik_id', 'characteristics_id', 'price', 'count'], 'integer'],
+            [['product_name', 'price', 'count'], 'required'],
+            [['manufacturer_id', 'rubrik_id', 'price', 'count'], 'integer'],
             [['product_name'], 'string', 'max' => 255],
             [['rubrik_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rubrik::class, 'targetAttribute' => ['rubrik_id' => 'rubrik_id']],
             [['manufacturer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Manufacturers::class, 'targetAttribute' => ['manufacturer_id' => 'manufacturer_id']],
-            [['characteristics_id'], 'exist', 'skipOnError' => true, 'targetClass' => Characteristics::class, 'targetAttribute' => ['characteristics_id' => 'characteristics_id']],
-            [['description'], 'text'],
+            [['description'], 'string'],
         ];
     }
 
@@ -58,21 +54,10 @@ class Products extends \yii\db\ActiveRecord
             'product_name' => 'Product Name',
             'manufacturer_id' => 'Manufacturer ID',
             'rubrik_id' => 'Rubrik ID',
-            'characteristics_id' => 'Characteristics ID',
             'price' => 'Price',
             'count' => 'Count',
             'description' => 'Description',
         ];
-    }
-
-    /**
-     * Gets query for [[Characteristics]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCharacteristics()
-    {
-        return $this->hasOne(Characteristics::class, ['characteristics_id' => 'characteristics_id']);
     }
 
     /**

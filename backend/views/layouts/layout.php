@@ -23,6 +23,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -49,32 +50,34 @@ AppAsset::register($this);
         </div>
     </nav>
     <div class="container" style="padding: 0; padding-bottom: 80px;">
-    <div class="container  px-4 px-lg-5 mt-5">
+        <div class="container  px-4 px-lg-5 mt-5">
             <div class="row">
                 <div class="col-2 card card-body">
-                <nav class="col-md-2 d-none d-md-block sidebar">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link active" href="/">Главная</a>
-                            </li>
-                            <hr>
-                            <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link" href="/products">Продукты</a>
-                            </li>
-                            <hr>
-                            <li class="nav-item">
-                                <a style="text-decoration:none; color:black;" class="nav-link" href="/orders">Заказы</a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+                    <nav class="col-md-2 d-none d-md-block sidebar">
+                        <div class="sidebar-sticky">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a style="text-decoration:none; color:black;" class="nav-link active" href="/">Главная</a>
+                                </li>
+                                <hr>
+                                <li class="nav-item">
+                                    <a style="text-decoration:none; color:black;" class="nav-link" href="/products">Продукты</a>
+                                </li>
+                                <hr>
+                                <li class="nav-item">
+                                    <a style="text-decoration:none; color:black;" class="nav-link" href="/orders">Заказы</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
                 </div>
                 <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                    <?= $content ?>
+                    <div class="card card-body">
+                        <?= $content ?>
+                    </div>
                 </main>
             </div>
-            </div>
+        </div>
     </div>
     <!-- Footer-->
     <footer class="bg-dark">
@@ -84,22 +87,6 @@ AppAsset::register($this);
     </footer>
 
     <?php $this->endBody() ?>
-
-    <script>
-        function get_cart_count() {
-            $.ajax({
-                url: '/api/get-cart-count',
-                method: "GET",
-                data: {},
-                success: function(data) {
-                    document.getElementById('cart_count').innerHTML = data
-                }
-            });
-        }
-        document.addEventListener("DOMContentLoaded", function() {
-            get_cart_count();
-        });
-    </script>
 </body>
 
 </html>
