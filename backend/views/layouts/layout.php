@@ -40,11 +40,16 @@ AppAsset::register($this);
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 </ul>
                 <form class="d-flex">
-
-                    <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
-                        <i class="bi-person"></i>
-                        <a class="a-signin" href="/account/index"><?= Yii::$app->user->identity->username ?></a>
-                    </button>
+                    <div class="dropdown">
+                        <a class="button-signin btn btn-dark btn-outline-dark dropdown-toggle" style="margin-left:15px;" onclick="event.preventDefault();" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi-person"></i>
+                            <?= Yii::$app->user->identity->username ?>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="http://frontend.test.localhost:8080/">Go to client panel</a></li>
+                            <!-- <li><a class="dropdown-item" href="#">Profile</a></li> -->
+                        </ul>
+                    </div>
                 </form>
             </div>
         </div>

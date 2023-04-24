@@ -55,7 +55,8 @@ AppAsset::register($this);
                 <?php if (!Yii::$app->user->isGuest) { ?>
 
                     <form class="d-flex">
-                        <?php $order=Orders::find()->where(['customer_id' => Yii::$app->user->id])->one(); if($order != null && OrdersProduct::find()->where(['order_id' => $order->id])->count() > 0){ ?>
+                        <?php $order = Orders::find()->where(['customer_id' => Yii::$app->user->id])->one();
+                        if ($order != null && OrdersProduct::find()->where(['order_id' => $order->id])->count() > 0) { ?>
                             <button class="button-signin btn btn-dark btn-outline-dark" style="margin-right:15px;" type="submit">
                                 <i class="bi-box"></i>
                                 <a class="a-signin" href="/account/index">Заказы</a>
@@ -68,10 +69,18 @@ AppAsset::register($this);
                             <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_count">0</span>
                         </button>
 
-                        <button class="button-signin btn btn-dark btn-outline-dark" style="margin-left:15px;" type="submit">
-                            <i class="bi-person"></i>
-                            <a class="a-signin" href="/account/index"><?= Yii::$app->user->identity->username ?></a>
-                        </button>
+                        <div class="dropdown">
+                            <a class="button-signin btn btn-dark btn-outline-dark dropdown-toggle" style="margin-left:15px;" onclick="event.preventDefault();" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi-person"></i>
+                                <?= Yii::$app->user->identity->username ?>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="http://backend.test.localhost:8080/">Go to admin panel</a></li>
+                                <?php if(Yii::$app->user->identity->status == 10) { ?><li><a class="dropdown-item" href="/account/index">Profile</a></li><?php } ?>
+                                <hr>
+                                <li><a class="dropdown-item" onclick="logout()">Log Out</a></li>
+                            </ul>
+                        </div>
                     </form>
 
                 <?php } else { ?>
@@ -128,6 +137,19 @@ AppAsset::register($this);
         document.addEventListener("DOMContentLoaded", function() {
             get_cart_count();
         });
+
+        function logout(){
+            $.ajax({
+                url: '/site/logout',
+                type: "POST",
+                success: function(data){
+                    window.location.reload();
+                },
+                error: function(xhr, status, error){
+                    console.log(xhr);
+                }
+            });
+        }
     </script>
 </body>
 
