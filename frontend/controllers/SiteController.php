@@ -19,6 +19,7 @@ use common\models\Products;
 use yii\data\Pagination;
 use common\models\Categories;
 use common\models\Images;
+use common\models\Rubrik;
 use common\models\Subcategories;
 
 /**
@@ -97,8 +98,9 @@ class SiteController extends Controller
         }
         $categories = Categories::find()->all();
         $subcategories = Subcategories::find()->all();
+        $rubriks = Rubrik::find()->all();
 
-        return $this->render('index', ['images'=>$images, 'models' => $models, 'pages' => $pages, 'categories' => $categories, 'subcategories' => $subcategories]);
+        return $this->render('index', ['images'=>$images, 'models' => $models, 'pages' => $pages, 'categories' => $categories, 'subcategories' => $subcategories, 'rubrics' => $rubriks]);
     }
 
     public function actionGetSubcategories($category_id){

@@ -7,30 +7,45 @@ use yii\bootstrap5\LinkPager;
 $this->title = 'My Yii Application';
 // var_dump($categories);exit;
 ?>
-<div class="container ">
+<div class="container px-4 px-lg-5 my-5 ">
 
-    <div class="dropdown">
+    <div class="dropdown" data-bs-auto-close="false">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
             Категории
         </button>
 
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="AppDropDownId">
+        <ul class="dropdown-menu" data-bs-auto-close="false" aria-labelledby="dropdownMenuButton1" id="AppDropDownId">
             <?php foreach ($categories as $category) { ?>
 
-                <li>
-                    <div class="btn-group dropend dropdown-item">
-                        <a type="button" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                <li data-bs-auto-close="false">
+                    <div class="btn-group dropend dropdown-item" data-bs-auto-close="false">
+                        <a type="button" id="dropdownMenuButton12" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
                             <?= $category->category_name ?>
                         </a>
-                        <ul class="dropdown-menu">
-                            <?php foreach ($subcategories as $subcategory) { 
-                                if($subcategory->category_id == $category->category_id){?>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <?= $subcategory->subcategory_name ?>
-                                    </a>
-                                </li>
-                            <?php }} ?>
+                        <ul class="dropdown-menu" data-bs-auto-close="false" data-bs-auto-close="false" aria-labelledby="dropdownMenuButton12" id="AppDropDownId2">
+                            <?php foreach ($subcategories as $subcategory) {
+                                if ($subcategory->category_id == $category->category_id) { ?>
+                                    <li data-bs-auto-close="false">
+                                        <div class="btn-group dropend dropdown-item" data-bs-auto-close="false">
+                                            <a type="button" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <?= $subcategory->subcategory_name ?>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <?php foreach ($rubrics as $rubric) {
+                                                    if ($rubric->subcategory_id == $subcategory->subcategory_id) { ?>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#">
+                                                                <?= $rubric->rubrik_name ?>
+                                                            </a>
+                                                        </li>
+                                                <?php }
+                                                } ?>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                            <?php }
+                            } ?>
 
                         </ul>
                     </div>
