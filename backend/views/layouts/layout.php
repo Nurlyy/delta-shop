@@ -67,6 +67,15 @@ AppAsset::register($this);
                                 <li class="nav-item">
                                     <a style="text-decoration:none; color:black;" class="nav-link" href="/orders">Заказы</a>
                                 </li>
+                                <hr>
+                                <li class="nav-item">
+                                    <a style="text-decoration:none; color:black;" class="nav-link" href="/products/manufacturers/">Производители</a>
+                                </li>
+                                <hr>
+                                <li class="nav-item">
+                                    <a style="text-decoration:none; color:black;" class="nav-link" href="/products/categories/">Категории</a>
+                                </li>
+                                <hr>
                             </ul>
                         </div>
                     </nav>

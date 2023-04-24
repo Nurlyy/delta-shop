@@ -4,21 +4,21 @@
 
 ?>
 
-<h2 class="text-center">Edit Product</h2>
+<h2 class="text-center">Create Product</h2>
 <hr>
 <div class="mb-3">
     <label for="product_name" class="form-label">Product Name</label>
-    <input type="text" class="form-control" id="product_name" name="product_name" value="<?= $product->product_name ?>">
+    <input type="text" required class="form-control" id="product_name" name="product_name">
 </div>
 <div class="mb-3">
     <label for="price" class="form-label">Price</label>
-    <input type="number" class="form-control" id="price" name="price" value="<?= $product->price ?>">
+    <input type="number" required class="form-control" id="price" name="price" >
 </div>
 <div class="mb-3">
     <label for="manufacturer_id" class="form-label">Manufacturer</label>
     <select class="form-select" id="manufacturer_id" name="manufacturer_id">
         <?php foreach ($manufacturers as $manufacturer) : ?>
-            <option value="<?= $manufacturer->manufacturer_id ?>" <?= $product->manufacturer_id == $manufacturer->manufacturer_id ? ' selected' : '' ?>><?= $manufacturer->manufacturer_name ?></option>
+            <option value="<?= $manufacturer->manufacturer_id ?>"><?= $manufacturer->manufacturer_name ?></option>
         <?php endforeach; ?>
     </select>
 </div>
@@ -26,7 +26,7 @@
     <label for="rubrik_id" class="form-label">Rubrik</label>
     <select class="form-select" id="rubrik_id" name="rubrik_id">
         <?php foreach ($rubriks as $rubrik) : ?>
-            <option value="<?= $rubrik->rubrik_id ?>" <?= $product->rubrik_id == $rubrik->rubrik_id ? ' selected' : '' ?>><?= $rubrik->rubrik_name ?></option>
+            <option value="<?= $rubrik->rubrik_id ?>"><?= $rubrik->rubrik_name ?></option>
         <?php endforeach; ?>
     </select>
 </div>
@@ -56,19 +56,18 @@
 </div>
 <div class="mb-3 mt-3">
     <label for="count" class="form-label">Quantity</label>
-    <input type="number" class="form-control" id="count" name="count" value="<?= $product->count ?>">
+    <input type="number" required class="form-control" id="count" name="count">
 </div>
 <div class="mb-3">
     <label for="description" class="form-label">Description</label>
-    <textarea class="form-control" id="description" name="description"><?= $product->description ?></textarea>
+    <textarea class="form-control" id="description" name="description"></textarea>
 </div>
 <button type="submit" class="btn btn-primary" onclick="save()">Save</button>
 </div>
 
 
 <script>
-    var characteristics = <?= json_encode($characteristics) ?>;
-    var deleted_characteristics = [];
+    var characteristics = [];
 
     function addCharacteristic() {
         characteristics.push({
@@ -88,17 +87,14 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 ${item.key}
                                 <span class="badge bg-secondary rounded-pill">${item.value}</span>
-                                <button onclick="deleteCharacteristic(${index}, ${item.id})" type="button" class="btn btn-danger btn-sm remove-char-btn"><i class="bi bi-trash"></i></button>
+                                <button onclick="deleteCharacteristic(${index})" type="button" class="btn btn-danger btn-sm remove-char-btn"><i class="bi bi-trash"></i></button>
                             </li>
                         </ul>`)
         });
     }
 
-    function deleteCharacteristic(index, id=null) {
+    function deleteCharacteristic(index) {
         characteristics.splice(index, 1);
-        if(id != null) {
-            deleted_characteristics.push(id);
-        }
         refreshCharacteristics();
     }
 
@@ -111,13 +107,12 @@
             manufacturer_id: $("#manufacturer_id").val(),
             rubrik_id: $("#rubrik_id").val(),
             characteristics: characteristics,
-            deleted_characteristics: deleted_characteristics,
             count: $("#count").val(),
             description: $('#description').val()
         }
         console.log(data);
         $.ajax({
-            url: '/products/<?= $product->product_id ?>/update',
+            url: '/products/create/',
             type: 'POST',
             data: data,
             success:function(data){
