@@ -39,7 +39,7 @@ use yii\helpers\Html;
                     ]);
                 },
                 'delete' => function ($url, $model, $key) {
-                    return Html::a('<i class="bi bi-trash"></i>', "", [
+                    return Html::a('<i class="bi bi-trash"></i>', null, [
                         'title' => Yii::t('app', 'Delete'),
                         'class' => 'btn btn-sm btn-outline-secondary',
                         'onclick' => "delete_item($model->rubrik_id, $model->subcategory_id)",
@@ -58,9 +58,9 @@ use yii\helpers\Html;
 <script>
     function delete_item(id, subcategory_id){
         $.ajax({
-            url: `${subcategory_id}/delete-subcategory/${id}`,
+            url: `${subcategory_id}/delete-rubrik/${id}`,
             type: "POST",
-            data: {subcategory_id: id},
+            data: {rubrik_id: id},
             success: function (data){
 
             },

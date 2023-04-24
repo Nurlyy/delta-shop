@@ -21,7 +21,7 @@
         }
         console.log(data);
         $.ajax({
-            url: 'update-rubrik/<?= $rubrik->rubrik_id ?>',
+            url: '',
             type: 'POST',
             data: data,
             success:function(data){

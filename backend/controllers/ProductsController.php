@@ -135,7 +135,7 @@ class ProductsController extends Controller
                     $product->save();
                 }
                 $transaction->commit();
-                return 'true';
+                return $this->redirect('/products');
             } catch (\Exception $e) {
                 $transaction->rollback();
                 return $e->getMessage();
@@ -248,7 +248,7 @@ class ProductsController extends Controller
                     $product->save();
                 }
                 $transaction->commit();
-                return 'true';
+                return $this->redirect('/products');
             } catch (Exception $e) {
                 $transaction->rollback();
                 return $e;
@@ -287,7 +287,7 @@ class ProductsController extends Controller
             $manufacturer_id = htmlentities(Yii::$app->request->post('manufacturer_id'));
             $manufacturer = Manufacturers::find()->where(['manufacturer_id' => $manufacturer_id])->one();
             if($manufacturer->delete()){
-                return 'true';
+                return $this->redirect('/manufacturers');
             }
         }
     }
@@ -300,7 +300,7 @@ class ProductsController extends Controller
             $manufacturer_name = htmlentities(Yii::$app->request->post('manufacturer_name'));
             $manufacturer->manufacturer_name = $manufacturer_name;
             if($manufacturer->validate() && $manufacturer->save()){
-                return 'true';
+                return $this->redirect('/manufacturers');
             }
         }
         return $this->render('update_manufacturer', ['manufacturer' => $manufacturer]);
@@ -345,7 +345,7 @@ class ProductsController extends Controller
             $category_name = htmlentities(Yii::$app->request->post('category_name'));
             $category->category_name = $category_name;
             if($category->validate() && $category->save()){
-                return 'true';
+                return $this->redirect('/products/categories/');
             }
         }
         return $this->render('update_category', ['category' => $category, 'dataProvider' => $dataProvider]);
@@ -356,7 +356,7 @@ class ProductsController extends Controller
             $category_id = htmlentities(Yii::$app->request->post('category_id'));
             $category = Categories::find()->where(['category_id' => $category_id])->one();
             if($category->delete()){
-                return 'true';
+                return $this->redirect('/products/categories/');
             }
         }
     }
@@ -392,7 +392,7 @@ class ProductsController extends Controller
             $subcategory_name = htmlentities(Yii::$app->request->post('subcategory_name'));
             $subcategory->subcategory_name = $subcategory_name;
             if($subcategory->validate() && $subcategory->save()){
-                return 'true';
+                return $this->redirect("/prpducts/update-category/{$subcategory->category_id}");
             }
         }
         return $this->render('update_subcategory', ['subcategory' => $subcategory, 'dataProvider' => $dataProvider]);
@@ -455,6 +455,22 @@ class ProductsController extends Controller
     }
 
     public function actionDeleteRubrik(){
-
+        if(Yii::$app->request->isPost){
+            $db = Yii::$app->db;
+            $transaction = $db->beginTransaction();
+            try{
+                $rubrik_id = htmlentities(Yii::$app->request->post('rubrik_id'));
+                $rubrik = Rubrik::find()->where(['rubrik_id' => $rubrik_id])->one();
+                $subcategory = Subcategories::find()->where(['subcategory_id' => $rubrik->subcategory_id])->one();
+                if($rubrik->delete()){
+                    $transaction->commit();
+                    return $this->redirect('/products/update-category/'.$subcategory->category_id.'/update-subcategory/'.$subcategory->subcategory_id);
+                }
+            }catch(Exception $e){
+                $transaction->rollback();
+                return $e->getMessage();
+            }
+            
+        }
     }
 }
