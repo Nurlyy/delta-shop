@@ -8,6 +8,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use common\models\User;
 
 /**
  * Site controller
@@ -24,6 +25,10 @@ class SiteController extends Controller
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
+                    'class' => AccessControl::class,
+                    'ruleConfig' => [
+                        'class' => '\common\components\AccessRule',
+                    ],
                     [
                         'actions' => ['login', 'error'],
                         'allow' => true,
@@ -32,6 +37,22 @@ class SiteController extends Controller
                         'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => false,
+                        'roles' => ['@', User::STATUS_USER],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->status == User::STATUS_ACTIVE;
+                        },
+                        'denyCallback' => function ($rule, $action) {
+                            return $this->redirect(["/site/logout"]);
+                        },
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['@', User::STATUS_ACTIVE],
+                        // 'roles' => ['@'],
+                        
                     ],
                 ],
             ],

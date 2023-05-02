@@ -75,8 +75,8 @@ AppAsset::register($this);
                                 <?= Yii::$app->user->identity->username ?>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="http://backend.test.localhost:8080/">Go to admin panel</a></li>
-                                <?php if(Yii::$app->user->identity->status == 10) { ?><li><a class="dropdown-item" href="/account/index">Profile</a></li><?php } ?>
+                                <?php if(Yii::$app->user->identity->status == 10) { ?><li><a class="dropdown-item" href="http://backend.test.localhost:8080/">Go to admin panel</a></li><?php } ?>
+                                <li><a class="dropdown-item" href="/account/index">Profile</a></li>
                                 <hr>
                                 <li><a class="dropdown-item" onclick="logout()">Log Out</a></li>
                             </ul>
