@@ -9,12 +9,14 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use common\models\User;
+use common\components\AccessRule;
 
 /**
  * Site controller
  */
 class SiteController extends Controller
 {
+    
     public $layout = 'layout';
     /**
      * {@inheritdoc}
@@ -24,23 +26,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                // 'controller' => 'site', // Replace with the ID or class name of your controller
+                'ruleConfig' => [
+                    'class' => AccessRule::class,
+                ],
                 'rules' => [
-                    'class' => AccessControl::class,
-                    'ruleConfig' => [
-                        'class' => '\common\components\AccessRule',
-                    ],
                     [
                         'actions' => ['login', 'error'],
                         'allow' => true,
+                        'roles' => ['?'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'allow' => false,
-                        'roles' => ['@', User::STATUS_USER],
+                        'roles' => ['@', User::STATUS_ACTIVE],
                         'matchCallback' => function ($rule, $action) {
                             return Yii::$app->user->identity->status == User::STATUS_ACTIVE;
                         },
@@ -48,14 +47,9 @@ class SiteController extends Controller
                             return $this->redirect(["/site/logout"]);
                         },
                     ],
-                    [
-                        'allow' => true,
-                        'roles' => ['@', User::STATUS_ACTIVE],
-                        // 'roles' => ['@'],
-                        
-                    ],
                 ],
             ],
+            
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -84,6 +78,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        
         return $this->render('index');
     }
 

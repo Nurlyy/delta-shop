@@ -71,7 +71,7 @@ $shipping = 0.0
                 </li>
             </ul>
             <br>
-            <script src="https://www.paypal.com/sdk/js?client-id=AXzlnn6TIuo2KsvgqI0iZD5h2CZI525YUAvqbzFYTysFwpVJy8hXjfxikPKJ6eNUNysf9FOX1Krcmvrv&currency=USD"></script>
+            <script src="https://www.paypal.com/sdk/js?client-id=Adw_mAEAhasbOEJuqtLsd_gO12BUghQyIMtR6RMsBD2KAQeRgXfFvAP_bALcacem7_7exF3V3BYnodmG&currency=USD"></script>
             <div id="paypal-button-container"></div>
             <script>
                 paypal.Buttons({
