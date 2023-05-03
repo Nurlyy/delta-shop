@@ -77,7 +77,7 @@ $shipping = 0.0
                 paypal.Buttons({
                     // Order is created on the server and the order id is returned
                     createOrder() {
-                        return fetch("/my-server/create-paypal-order", {
+                        return fetch("/cart/create-paypal-order", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -86,8 +86,8 @@ $shipping = 0.0
                                 // like product skus and quantities
                                 body: JSON.stringify({
                                     cart: [{
-                                        sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
-                                        quantity: "YOUR_PRODUCT_QUANTITY",
+                                        sku: "15",
+                                        quantity: "5",
                                     }, ],
                                 }),
                             })
@@ -96,7 +96,7 @@ $shipping = 0.0
                     },
                     // Finalize the transaction on the server after payer approval
                     onApprove(data) {
-                        return fetch("/my-server/capture-paypal-order", {
+                        return fetch("/cart/capture-paypal-order", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",

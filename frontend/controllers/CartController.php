@@ -7,11 +7,24 @@ use common\models\CartProduct;
 use common\models\Products;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use GuzzleHttp\Psr7\Request;
 use Yii;
+
+
 
 class CartController extends Controller
 {
+    private const PAYPAL_EMAIL =  'Your PayPal Business Email';
+    private const RETURN_URL =  'https://www.your-website.com/return.php';
+    private const CANCEL_URL =  'https://www.your-website.com/cancel.php';
+    private const NOTIFY_URL =  'https://www.your-website.com/notify.php';
+    private const CURRENCY =  'USD';
+    private const SANDBOX =  TRUE; // TRUE or FA';
+    private const LOCAL_CERTIFICATE =  FALSE; // TRUE or F';
+    protected const PAYPAL_URL = self::SANDBOX ? "https://www.sandbox.paypal.com/cgi-bin/webscr" : "https://www.paypal.com/cgi-bin/webscr";
+
     public $layout = 'layout';
+    public $enableCsrfValidation = false;
 
     public function behaviors()
     {
@@ -49,7 +62,7 @@ class CartController extends Controller
             }
         }
 
-        return $this->render('index', ['cart' => $cart, 'cart_products' => $cart_products, 'products' => $products]);
+        return $this->render('index', ['cart' => $cart, 'cart_products' => $cart_products, 'products' => $products, 'paypal_url' => self::PAYPAL_URL]);
     }
 
     public function actionAddToCart()
@@ -61,28 +74,138 @@ class CartController extends Controller
         $product = Products::find()->where(['product_id' => $product_id])->one();
 
         $cart = Cart::find()->where(['user_id' => Yii::$app->user->identity->id])->one();
-        if($cart == null) {
+        if ($cart == null) {
             $cart = new Cart();
             $cart->user_id = Yii::$app->user->identity->id;
             $cart->save();
         }
         $cart_product = CartProduct::find()->where(['cart_id' => $cart->id, 'product_id' => $product->product_id])->one();
-        if($cart_product == null){
+        if ($cart_product == null) {
             $cart_product = new CartProduct();
             $cart_product->cart_id = $cart->id;
             $cart_product->product_id = $product->product_id;
         }
 
         // return 'true';
-        if($product_quantity > $product->count){
+        if ($product_quantity > $product->count) {
             return 'false';
         }
         $cart_product->product_count = isset($cart_product->product_count) ? $cart_product->product_count + $product_quantity : $product_quantity;
-        if($cart_product->product_count > $product->count){
+        if ($cart_product->product_count > $product->count) {
             return 'false';
         }
-        if($cart_product->save()){
+        if ($cart_product->save()) {
             return 'true';
         }
+    }
+
+    public function actionCreatePaypalOrder()
+    {
+        $this->enableCsrfValidation = false;
+        $accessToken = $this->generateAccessToken();
+        $url = "https://api-m.sandbox.paypal.com/v2/checkout/orders";
+        $data = array(
+            'intent' => 'CAPTURE',
+            'purchase_units' => array(
+                array(
+                    'amount' => array(
+                        'currency_code' => 'USD',
+                        'value' => '1.00'
+                    )
+                )
+            )
+        );
+        $headers = array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken
+        );
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $headers
+        ));
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            // $data = json_decode($response, true);
+            return $response;
+        }
+    }
+
+    public function actionCapturePaypalOrder(){
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+
+        $request = Yii::$app->request;
+        $order_id = $request->getBodyParam('orderID');
+        $this->enableCsrfValidation = false;
+        $accessToken = $this->generateAccessToken();
+        $url = "https://api-m.sandbox.paypal.com/v2/checkout/orders/{$order_id}/capture";
+        $method = "POST";
+        $headers = [
+            "Content-type" => "application/json",
+            "Authorizaion" => "Bearer {$accessToken}"
+        ];
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true, 
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_HTTPHEADER => $headers,            
+        ]);
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if($err){
+            echo "CURL ERROR #: " . $err;
+        } else {
+            $data = json_decode($response, true);
+            return $data;
+        }
+    }
+
+    private function generateAccessToken()
+    {
+        $encoded = base64_encode("Adw_mAEAhasbOEJuqtLsd_gO12BUghQyIMtR6RMsBD2KAQeRgXfFvAP_bALcacem7_7exF3V3BYnodmG:EIcavyp_x_yaNSTKj4mCepqENNFO4fvZSGFzgxlrxubq6UHCiGDqFVYzGZjS423wYovv0vqCw2G5R213");
+        $url = "https://api-m.sandbox.paypal.com/v1/oauth2/token";
+
+        $data = array(
+            'grant_type' => 'client_credentials'
+        );
+
+        $options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query($data),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Basic {$encoded}",
+                "Content-Type: application/x-www-form-urlencoded"
+            )
+        );
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $json = json_decode($response);
+        return $json->access_token;
     }
 }

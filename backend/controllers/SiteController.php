@@ -26,7 +26,6 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                // 'controller' => 'site', // Replace with the ID or class name of your controller
                 'ruleConfig' => [
                     'class' => AccessRule::class,
                 ],
