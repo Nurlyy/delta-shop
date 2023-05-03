@@ -96,26 +96,31 @@ $shipping = 0.0
                     },
                     // Finalize the transaction on the server after payer approval
                     onApprove(data) {
-                        return fetch("/cart/capture-paypal-order", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    orderID: data.orderID
-                                })
-                            })
-                            .then((response) => response.json())
-                            .then((orderData) => {
-                                // Successful capture! For dev/demo purposes:
-                                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                                const transaction = orderData.purchase_units[0].payments.captures[0];
-                                alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
-                                // When ready to go live, remove the alert and show a success message within this page. For example:
-                                // const element = document.getElementById('paypal-button-container');
-                                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                                // Or go to another URL:  window.location.href = 'thank_you.html';
-                            });
+                        console.log(data);
+                        return $.ajax({
+                            url: "/cart/capture-paypal-order",
+                            type: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            data: JSON.stringify({
+                                orderID: data.orderID
+                            }),
+                            success: function(response) {
+                                console.log(response);
+                            }
+                        });
+                        // .success(function(response){console.log(response)});
+                        // .then((orderData) => {
+                        //     // Successful capture! For dev/demo purposes:
+                        //     console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        //     const transaction = orderData.purchase_units[0].payments.captures[0];
+                        //     alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        //     // When ready to go live, remove the alert and show a success message within this page. For example:
+                        //     // const element = document.getElementById('paypal-button-container');
+                        //     // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        //     // Or go to another URL:  window.location.href = 'thank_you.html';
+                        // });
                     }
                 }).render('#paypal-button-container');
             </script>
