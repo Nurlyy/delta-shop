@@ -138,7 +138,7 @@
     </div>
 </section>
 
-<section class="py-5 bg-light">
+<!-- <section class="py-5 bg-light">
     <div class="container px-4 px-lg-5 my-5">   
         <h2 class="fw-bolder mb-4">Product Reviews</h2>
         <div class="row">
@@ -182,7 +182,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 
 

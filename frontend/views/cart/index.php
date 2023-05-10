@@ -111,7 +111,8 @@ $cartProducts = [];
                                 cart: <?= json_encode($cartProducts) ?>
                             }),
                             success: function(response) {
-                                console.log(response);
+                                // console.log(response);
+                                window.location.href = "frontend.test.localhost:8080/orders/index"
                             }
                         });
                         // .success(function(response){console.log(response)});

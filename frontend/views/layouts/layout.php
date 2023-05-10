@@ -59,7 +59,7 @@ AppAsset::register($this);
                         if ($order != null && OrdersProduct::find()->where(['order_id' => $order->order_id])->count() > 0) { ?>
                             <button class="button-signin btn btn-dark btn-outline-dark" style="margin-right:15px;" type="submit">
                                 <i class="bi-box"></i>
-                                <a class="a-signin" href="/account/index">Заказы</a>
+                                <a class="a-signin" href="/orders/index">Заказы</a>
                             </button>
                         <?php } ?>
 
