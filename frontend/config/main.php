@@ -42,6 +42,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'product/<product_id:\w+>' => 'product/product',    
+                'categories/<category_id:\w+>' => 'categories/category',
             ],
         ],
         

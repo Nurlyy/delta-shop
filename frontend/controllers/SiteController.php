@@ -86,9 +86,7 @@ class SiteController extends Controller
     {
         $this->layout = "layout";
         $query = Products::find();
-        $countQuery = clone $query;
-        $pages = new Pagination(['totalCount' => $countQuery->count()]);
-        $models = $query->offset($pages->offset)->limit($pages->limit)->all();
+        $models = Products::find()->all();
         $images = [];
         foreach($models as $model) {
             $temp_images = Images::find()->where(['prod_id' => $model->product_id])->all();
@@ -100,7 +98,7 @@ class SiteController extends Controller
         $subcategories = Subcategories::find()->all();
         $rubriks = Rubrik::find()->all();
 
-        return $this->render('index', ['images'=>$images, 'models' => $models, 'pages' => $pages, 'categories' => $categories, 'subcategories' => $subcategories, 'rubrics' => $rubriks]);
+        return $this->render('index', ['images'=>$images, 'models' => $models, 'categories' => $categories, 'subcategories' => $subcategories, 'rubrics' => $rubriks]);
     }
 
     public function actionGetSubcategories($category_id){

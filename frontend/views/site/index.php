@@ -19,22 +19,28 @@ $this->title = 'My Yii Application';
 
                 <li data-bs-auto-close="false">
                     <div class="btn-group dropend dropdown-item" data-bs-auto-close="false">
-                        <a type="button" id="dropdownMenuButton12" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a style="text-decoration:none; color:black; margin-right:7px;" type="button" href="/categories/<?= $category->category_id ?>">
                             <?= $category->category_name ?>
+                        </a>
+                        <a style="background-color:lightgray; border-radius:5px; width:30px; text-align:center;" type="button" id="dropdownMenuButton12" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                            
                         </a>
                         <ul class="dropdown-menu" data-bs-auto-close="false" data-bs-auto-close="false" aria-labelledby="dropdownMenuButton12" id="AppDropDownId2">
                             <?php foreach ($subcategories as $subcategory) {
                                 if ($subcategory->category_id == $category->category_id) { ?>
                                     <li data-bs-auto-close="false">
                                         <div class="btn-group dropend dropdown-item" data-bs-auto-close="false">
-                                            <a type="button" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <a style="text-decoration:none; color:black; margin-right:7px;" type="button" href="/categories/<?= $category->category_id ?>/<?= $subcategory->subcategory_id ?>">
                                                 <?= $subcategory->subcategory_name ?>
+                                            </a>
+                                            <a style="background-color:lightgray; border-radius:5px; width:30px; text-align:center;" type="button" data-bs-auto-close="false" class="dropdown-item dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                                
                                             </a>
                                             <ul class="dropdown-menu">
                                                 <?php foreach ($rubrics as $rubric) {
                                                     if ($rubric->subcategory_id == $subcategory->subcategory_id) { ?>
                                                         <li>
-                                                            <a class="dropdown-item" href="#">
+                                                            <a style="text-decoration:none; color:black; margin-right:7px;" class="dropdown-item" href="/categories/<?= $category->category_id ?>/<?= $subcategory->subcategory_id ?>/<?= $rubric->rubrik_id ?>">
                                                                 <?= $rubric->rubrik_name ?>
                                                             </a>
                                                         </li>
@@ -88,6 +94,3 @@ $this->title = 'My Yii Application';
         </div>
     </div>
 </section>
-<?php echo LinkPager::widget([
-    'pagination' => $pages,
-]); ?>
