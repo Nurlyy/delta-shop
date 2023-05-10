@@ -22,43 +22,71 @@ class CategoriesController extends Controller
 
     public function actionCategory()
     {
+        $tree = "";
+
+        $cats = Categories::find()->all();
+        $subcats = Subcategories::find()->all();
+        $rubs = Rubrik::find()->all();
+
         $category_id = htmlentities($_GET['category_id']);
-        $category = Categories::find()->where(['category_id' => $category_id])->one();
-        $categories = Categories::find()->all();
-
         $subcategory_id = isset($_GET['subcategory_id']) ? htmlentities($_GET['subcategory_id']) : null;
-        $subcategorie = Subcategories::find()->where(['subcategory_id' => $subcategory_id])->one();
-        $subcategories = Subcategories::find()->all();
-
         $rubrik_id = isset($_GET['rubrik_id']) ? htmlentities($_GET['rubrik_id']) : null;
-        $rubric = Rubrik::find()->where(['rubrik_id' => $rubrik_id])->all();
-        $rubriks = [];
 
         $products = [];
 
+        $subcategories = [];
+        $rubriks = [];
 
+        $category = Categories::find()->where(['category_id' => $category_id])->one();
+        $tree .= "{$category->category_name} /";
 
-        foreach ($subcategorie as $subcategory) {
-            $rubriks[$subcategory->subcategory_id] = Rubrik::find()->where(['subcategory_id' => $subcategory->subcategory_id])->all();
+        if (isset($subcategory_id)) {
+            $subcategories = Subcategories::find()->where(['subcategory_id' => $subcategory_id, 'category_id' => $category_id])->one();
+            $tree .= " {$subcategories->subcategory_name} /";
+        } else {
+            $subcategories = Subcategories::find()->where(['category_id' => $category_id])->all();
         }
 
-        if (!empty($rubriks)) {
-            foreach ($rubriks as $rubrik) {
-                foreach ($rubrik as $r) {
-                    $prods = Products::find()->where(['rubrik_id' => $r->rubrik_id])->all();
-                    array_push($products, $prods);
+        if (isset($rubrik_id)) {
+            $rubriks = Rubrik::find()->where(['rubrik_id' => $rubrik_id, 'subcategory_id' => $subcategory_id])->one();
+            $tree .= " {$rubriks->rubrik_name} /";
+        } else {
+            $subs_ids = [];
+            if (isset($subcategory_id)) {
+                array_push($subs_ids, $subcategories->subcategory_id);
+            } else {
+                foreach ($subcategories as $sub) {
+                    array_push($subs_ids, $sub->subcategory_id);
                 }
             }
+            $rubriks = Rubrik::find()->where(['in', 'subcategory_id', $subs_ids])->all();
         }
 
-        $tree = "{$category->category_name}/";
-        if(isset($subcategory_id)){
-            $tree .= "{$subcategorie->subcategory_name}/";
+        if (!isset($rubriks[0]) && !empty($rubriks)) {
+            // var_dump($rubriks);exit;
+            $prods = Products::find()->where(['rubrik_id' => $rubriks->rubrik_id])->all();
+            foreach($prods as $prod){
+                array_push($products, $prod);
+            }
+            $products = $prods;
+        } else {
+            $prods = [];
+            foreach ($rubriks as $rubrik) {
+                $p = Products::find()->where(['rubrik_id' => $rubrik->rubrik_id])->all();
+                // 
+                if (!empty($p)) {
+                    foreach ($p as $_p) {
+                        // var_dump($_p);exit;
+                        array_push($prods, $_p);
+                    }
+                }
+            }
+            $products = $prods;
         }
-        if(isset($rubrik_id)){
-            $tree .= "{$rubrik->rubrik_name}/";
-        }
-        
-        return $this->render('category', ['models' => $products, 'cat' => $category, 'subcategories' => $subcategories, 'rubric' => $rubric, 'rubriks' => $rubriks, 'categories' => $categories]);
+
+        // var_dump($products);
+        // exit;
+
+        return $this->render('category', ['categories' => $cats, 'subcategories' => $subcats, 'rubrics' => $rubs, 'models' => $products, 'tree' => $tree]);
     }
 }

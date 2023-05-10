@@ -43,6 +43,8 @@ return [
             'rules' => [
                 'product/<product_id:\w+>' => 'product/product',    
                 'categories/<category_id:\w+>' => 'categories/category',
+                'categories/<category_id:\w+>/<subcategory_id:\w+>' => 'categories/category',
+                'categories/<category_id:\w+>/<subcategory_id:\w+>/<rubrik_id:\w+>' => 'categories/category',
             ],
         ],
         

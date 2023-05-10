@@ -62,7 +62,7 @@ $this->title = 'My Yii Application';
             </ul>
 
             <div>
-                <?= $cat->category_name ?>/
+                <?= $tree ?>
             </div>
         </div>
 
@@ -73,8 +73,7 @@ $this->title = 'My Yii Application';
     <div class="container px-4 px-lg-5 mt-5 ">
 
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <?php foreach ($models as $m) {
-                foreach ($m as $model) {
+            <?php foreach ($models as $model) {
                     if ($model->count > 0) { ?>
                         <div class="col mb-5">
                             <div class="card h-100">
@@ -96,7 +95,7 @@ $this->title = 'My Yii Application';
                             </div>
                         </div>
             <?php }
-                }
+                
             } ?>
 
 
