@@ -4,7 +4,11 @@ namespace frontend\controllers;
 
 use common\models\Cart;
 use common\models\CartProduct;
+use common\models\Orders;
+use common\models\PaymentInfo;
 use common\models\Products;
+use common\models\OrdersProduct;
+use Exception;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use GuzzleHttp\Psr7\Request;
@@ -148,6 +152,7 @@ class CartController extends Controller
     {
         $post_data = json_decode(file_get_contents('php://input'), true);
         $orderID = $post_data['orderID'];
+        $cart = $post_data['cart'];
         if (!isset($orderID) && empty($orderID)) {
             return 'error';
         }
@@ -176,8 +181,48 @@ class CartController extends Controller
         if ($err) {
             echo "CURL ERROR #: " . $err;
         } else {
-            // $data = json_decode($response, true);
-            return $response;
+            $db= Yii::$app->db;
+            $transaction = $db->beginTransaction();
+            try{
+                $response = json_decode($response, true);
+                if (isset($response['status'])) {
+                    if ($response['status'] == "COMPLETED") {
+                        $order = new Orders();
+                        $order->customer_id = Yii::$app->user->identity->id;
+                        $order->total_price = 0;
+                        $order->currency = "USD";
+                        $order->order_date = date('Y-m-d H:i:s');
+                        if($order->validate()){
+                            $order->save();
+                        }
+                        foreach ($cart as $id => $quantity) {
+                            $transaction->rollBack();
+                            return $quantity;
+                            $product = Products::find()->where(['product_id' => $id])->one();
+                            if ($quantity <= $product->count) {
+                                $orders_product = new OrdersProduct();
+                                $orders_product->order_id = $order->id;
+                                $orders_product->product_id = $product->product_id;
+                                $orders_product->product_count = $product->price * $quantity;
+                                $order->total_price += $product->price * $quantity;
+                                if($orders_product->validate()){
+                                    $orders_product->save();
+                                }
+                            }
+                        }
+                        if($order->validate()){
+                            $order->save();
+                        }
+                    }
+                }
+                $transaction->commit();
+                var_dump($response);exit;
+            } catch(Exception $e){
+                $transaction->rollBack();
+                return $e->getMessage();
+            }
+            
+            // return $response;
         }
     }
 

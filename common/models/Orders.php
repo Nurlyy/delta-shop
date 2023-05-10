@@ -9,12 +9,12 @@ use Yii;
  *
  * @property int $order_id
  * @property int $customer_id
+ * @property int $total_price
+ * @property string $currency
  * @property string $order_date
- * @property int $order_sum
  *
- * @property Users $customer
+ * @property User $customer
  * @property OrdersProduct[] $ordersProducts
- * @property Products[] $products
  */
 class Orders extends \yii\db\ActiveRecord
 {
@@ -32,10 +32,11 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customer_id', 'order_date', 'order_sum'], 'required'],
-            [['customer_id', 'order_sum'], 'integer'],
+            [['customer_id', 'total_price', 'currency', 'order_date'], 'required'],
+            [['customer_id', 'total_price'], 'integer'],
             [['order_date'], 'safe'],
-            [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['customer_id' => 'user_id']],
+            [['currency'], 'string', 'max' => 255],
+            [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['customer_id' => 'id']],
         ];
     }
 
@@ -47,8 +48,9 @@ class Orders extends \yii\db\ActiveRecord
         return [
             'order_id' => 'Order ID',
             'customer_id' => 'Customer ID',
+            'total_price' => 'Total Price',
+            'currency' => 'Currency',
             'order_date' => 'Order Date',
-            'order_sum' => 'Order Sum',
         ];
     }
 
@@ -59,7 +61,7 @@ class Orders extends \yii\db\ActiveRecord
      */
     public function getCustomer()
     {
-        return $this->hasOne(Users::class, ['user_id' => 'customer_id']);
+        return $this->hasOne(User::class, ['id' => 'customer_id']);
     }
 
     /**
@@ -70,15 +72,5 @@ class Orders extends \yii\db\ActiveRecord
     public function getOrdersProducts()
     {
         return $this->hasMany(OrdersProduct::class, ['order_id' => 'order_id']);
-    }
-
-    /**
-     * Gets query for [[Products]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProducts()
-    {
-        return $this->hasMany(Products::class, ['product_id' => 'product_id'])->viaTable('orders_product', ['order_id' => 'order_id']);
     }
 }

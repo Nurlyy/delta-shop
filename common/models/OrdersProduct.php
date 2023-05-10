@@ -32,9 +32,8 @@ class OrdersProduct extends \yii\db\ActiveRecord
         return [
             [['order_id', 'product_id', 'product_count'], 'required'],
             [['order_id', 'product_id', 'product_count'], 'integer'],
-            [['order_id', 'product_id'], 'unique', 'targetAttribute' => ['order_id', 'product_id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'product_id']],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Orders::class, 'targetAttribute' => ['order_id' => 'order_id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'product_id']],
         ];
     }
 

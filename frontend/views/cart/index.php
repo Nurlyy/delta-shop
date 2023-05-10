@@ -1,7 +1,8 @@
 <?php
 
 $subtotal = 0.0;
-$shipping = 0.0
+$shipping = 0.0;
+$cartProducts = [];
 
 ?>
 
@@ -11,7 +12,9 @@ $shipping = 0.0
             <h2>Your Cart</h2>
             <ul class="list-group">
                 <?php foreach ($products as $product) {
-                    $subtotal += $product['price'] * $product['quantity'] ?>
+                    $subtotal += $product['price'] * $product['quantity'];
+                    $cartProducts[$product['product_id']] = $product['quantity'];
+                    ?>
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-md-4">
@@ -85,16 +88,14 @@ $shipping = 0.0
                                 // use the "body" param to optionally pass additional order information
                                 // like product skus and quantities
                                 body: JSON.stringify({
-                                    cart: [{
-                                        sku: "15",
-                                        quantity: "5",
-                                    }, ],
+                                    cart: <?= json_encode($cartProducts) ?>
                                 }),
                             })
+                            // .then((response) => console.log(response));
                             .then((response) => response.json())
                             .then((order) => order.id);
                     },
-                    // Finalize the transaction on the server after payer approval
+
                     onApprove(data) {
                         console.log(data);
                         return $.ajax({
@@ -104,7 +105,8 @@ $shipping = 0.0
                                 "Content-Type": "application/json",
                             },
                             data: JSON.stringify({
-                                orderID: data.orderID
+                                orderID: data.orderID,
+                                cart: <?= json_encode($cartProducts) ?>
                             }),
                             success: function(response) {
                                 console.log(response);
