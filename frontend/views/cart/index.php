@@ -4,6 +4,8 @@ $subtotal = 0.0;
 $shipping = 0.0;
 $cartProducts = [];
 
+// var_dump($products);exit;
+
 ?>
 
 <div class="container p-5 m-0">

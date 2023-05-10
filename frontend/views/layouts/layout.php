@@ -56,7 +56,7 @@ AppAsset::register($this);
 
                     <form class="d-flex">
                         <?php $order = Orders::find()->where(['customer_id' => Yii::$app->user->id])->one();
-                        if ($order != null && OrdersProduct::find()->where(['order_id' => $order->id])->count() > 0) { ?>
+                        if ($order != null && OrdersProduct::find()->where(['order_id' => $order->order_id])->count() > 0) { ?>
                             <button class="button-signin btn btn-dark btn-outline-dark" style="margin-right:15px;" type="submit">
                                 <i class="bi-box"></i>
                                 <a class="a-signin" href="/account/index">Заказы</a>

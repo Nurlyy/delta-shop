@@ -59,7 +59,7 @@ class CartController extends Controller
         $products = [];
         if (!empty($cart_products)) {
             foreach ($cart_products as $cart_product) {
-                $product = Products::find()->where(['product_id' => $cart_product->id])->asArray()->one();
+                $product = Products::find()->where(['product_id' => $cart_product->product_id])->asArray()->one();
                 $product['quantity'] = $cart_product->product_count;
                 array_push($products, ($product));
             }
@@ -181,8 +181,7 @@ class CartController extends Controller
         if ($err) {
             echo "CURL ERROR #: " . $err;
         } else {
-            $db= Yii::$app->db;
-            $transaction = $db->beginTransaction();
+            $transaction = Yii::$app->db->beginTransaction();
             try{
                 $response = json_decode($response, true);
                 if (isset($response['status'])) {
@@ -195,28 +194,43 @@ class CartController extends Controller
                         if($order->validate()){
                             $order->save();
                         }
+                        // var_dump($cart);exit;
                         foreach ($cart as $id => $quantity) {
-                            $transaction->rollBack();
-                            return $quantity;
+                            // $transaction->rollBack();
+                            // return $quantity;
                             $product = Products::find()->where(['product_id' => $id])->one();
+                            // return $product->count;
                             if ($quantity <= $product->count) {
                                 $orders_product = new OrdersProduct();
-                                $orders_product->order_id = $order->id;
+                                $orders_product->order_id = $order->order_id;
                                 $orders_product->product_id = $product->product_id;
-                                $orders_product->product_count = $product->price * $quantity;
+                                $orders_product->product_count = $quantity;
                                 $order->total_price += $product->price * $quantity;
                                 if($orders_product->validate()){
-                                    $orders_product->save();
+                                    if($orders_product->save()){
+                                        $product->count = $product->count - $quantity;
+                                        $product->save();
+
+                                        $cart = Cart::find()->where(['user_id' => Yii::$app->user->id])->one();
+                                        $cartProducts = CartProduct::find()->where(['cart_id' => $cart->id])->all();
+                                        foreach($cartProducts as $p){
+                                            $p->delete();
+                                        }
+                                    }
                                 }
+                            }
+                            else{
+                                throw new Exception("Invalid quantity");
                             }
                         }
                         if($order->validate()){
                             $order->save();
+                            $transaction->commit();
                         }
                     }
                 }
-                $transaction->commit();
-                var_dump($response);exit;
+                
+                // var_dump($response);exit;
             } catch(Exception $e){
                 $transaction->rollBack();
                 return $e->getMessage();
