@@ -4,15 +4,21 @@
 
 ?>
 
+
 <h2 class="text-center">Create Product</h2>
 <hr>
+<div class="mb-3">
+    <label for="imageFiles" class="form-label">Select Images:</label>
+    <input type="file" id="imageFiles" name="imageFiles[]" class="form-control" multiple onchange="previewImages(event)">
+    <div class="mt-2" id="imagePreviewContainer"></div>
+</div>
 <div class="mb-3">
     <label for="product_name" class="form-label">Product Name</label>
     <input type="text" required class="form-control" id="product_name" name="product_name">
 </div>
 <div class="mb-3">
     <label for="price" class="form-label">Price</label>
-    <input type="number" required class="form-control" id="price" name="price" >
+    <input type="number" required class="form-control" id="price" name="price">
 </div>
 <div class="mb-3">
     <label for="manufacturer_id" class="form-label">Manufacturer</label>
@@ -44,13 +50,6 @@
         </div>
     </div>
     <div id="characteristics_div">
-        <!-- <ul class="list-group" id="char-list">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Example key
-                                <span class="badge bg-secondary rounded-pill">Example value</span>
-                                <button type="button" class="btn btn-danger btn-sm remove-char-btn"><i class="bi bi-trash"></i></button>
-                            </li>
-                        </ul> -->
     </div>
 
 </div>
@@ -64,9 +63,48 @@
 </div>
 <button type="submit" class="btn btn-primary" onclick="save()">Save</button>
 </div>
+<style>
+    #imagePreviewContainer {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
+    .image-preview {
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    .image-preview img {
+        display: block;
+        height:250px !important;
+    }
+</style>
 
 <script>
+    var formData = new FormData();
+    function previewImages(event) {
+        var container = document.getElementById('imagePreviewContainer');
+        container.innerHTML = '';
+        if (event.target.files) {
+            for (var i = 0; i < event.target.files.length; i++) {
+                formData.append('imageFiles[]', event.target.files[i]);
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.className = 'image-preview';
+                    image.style.display = 'block';
+                    image.style.height = '150px';
+                    image.style.marginBottom = '10px';
+                    image.style.marginRight = '10px';
+                    image.style.borderRadius = '5px';
+                    container.appendChild(image);
+                };
+                reader.readAsDataURL(event.target.files[i]);
+            }
+        }
+    }
+
     var characteristics = [];
 
     function addCharacteristic() {
@@ -99,27 +137,37 @@
     }
 
 
-    function save(){
-        console.log(characteristics);
-        var data = {
-            product_name : $("#product_name").val(),
-            price: $("#price").val(),
-            manufacturer_id: $("#manufacturer_id").val(),
-            rubrik_id: $("#rubrik_id").val(),
-            characteristics: characteristics,
-            count: $("#count").val(),
-            description: $('#description').val()
-        }
-        console.log(data);
+    function save() {
+        // console.log(characteristics);
+        formData.append('product_name', $("#product_name").val());
+        formData.append('price', $("#price").val());
+        formData.append('manufacturer_id', $("#manufacturer_id").val());
+        formData.append('rubrik_id', $("#rubrik_id").val());
+        formData.append('characteristics', characteristics);
+        formData.append('count', $("#count").val());
+        formData.append('description', $('#description').val());
+        // var data = {
+        //     product_name: $("#product_name").val(),
+        //     price: $("#price").val(),
+        //     manufacturer_id: $("#manufacturer_id").val(),
+        //     rubrik_id: $("#rubrik_id").val(),
+        //     characteristics: characteristics,
+        //     count: $("#count").val(),
+        //     description: $('#description').val(),
+        //     images: formData,
+        // }
+        console.log(formData);
         $.ajax({
             url: '/products/create/',
             type: 'POST',
-            data: data,
-            success:function(data){
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
                 console.log(data);
             },
-            error: function(xhr, status, error){
-                console.log(xhr);
+            error: function(xhr, status, error) {
+                console.log(error);
             }
         });
     }

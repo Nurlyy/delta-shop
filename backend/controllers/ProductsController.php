@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\Categories;
+use common\models\Images;
 use common\models\ProductCharacteristics;
 use common\models\Manufacturers;
 use common\models\Products;
@@ -13,6 +14,7 @@ use yii\web\Controller;
 use yii\data\ActiveDataProvider;
 use Yii;
 use Exception;
+use yii\web\UploadedFile;
 
 class ProductsController extends Controller
 {
@@ -173,10 +175,21 @@ class ProductsController extends Controller
         $rubriks = Rubrik::find()->all();
 
         if (Yii::$app->request->isPost) {
+            // var_dump('gkroepg');exit;
+            // var_dump($_POST);exit;
+            $images = [];
+
+            
+            // var_dump('gkroepg');exit;
+
+            
+
             $db = Yii::$app->db;
             $transaction = $db->beginTransaction();
             try {
                 $product = new Products();
+                $images = [];
+                
                 if (isset($_POST['product_name'])) {
                     $product->product_name = htmlentities(Yii::$app->request->post('product_name'));
                 } else {
@@ -247,6 +260,20 @@ class ProductsController extends Controller
 
                     $product->save();
                 }
+
+                if(!empty($_FILES['imageFiles']['name'])){
+                    $images = UploadedFile::getInstancesByName('imageFiles');
+                }
+                foreach ($images as $file) {
+                    // var_dump($file);exit;
+                    $image = new Images();
+                    $filename = uniqid() . '.' . $file->extension;
+                    $file->saveAs('uploads/' . $filename);
+                    $image->path = $filename;
+                    $image->prod_id = $product->product_id; // Set the ID of the product the image belongs to
+                    $image->save();
+                }
+
                 $transaction->commit();
                 return $this->redirect('/products');
             } catch (Exception $e) {
