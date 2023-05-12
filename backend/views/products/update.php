@@ -22,16 +22,18 @@
 <h2 class="text-center">Edit Product</h2>
 <hr>
 <div class="mb-3">
-    <label for="imageFiles" class="form-label">Select Images:</label>
-    <input type="file" id="imageFiles" name="imageFiles[]" class="form-control" multiple onchange="previewImages(event)">
+    <label for="imageFiles" class="form-label">Select Image:</label>
+    <input type="file" id="imageFiles" name="image" class="form-control" onchange="previewImages(event)">
     <div class="mt-2" id="imagePreviewContainer">
-        <?php if (isset($images)) {
-            foreach ($images as $image) { ?>
+        <?php if (isset($image)) {
+        ?>
 
-                <img style="display: block;margin-right: 10px;margin-bottom: 10px; height:150px; border-radius:5px;" src="/uploads/<?= $image->path ?>" />
+            <img id="imagePreview" style="display: block;margin-right: 10px;margin-bottom: 10px; height:150px; border-radius:5px;" src="/uploads/<?= $image->path ?>" />
 
-        <?php }
-        } ?>
+        <?php
+        } else { ?>
+            <img style="display: block;margin-right: 10px;margin-bottom: 10px; height:150px; border-radius:5px;" id="imagePreview">
+        <?php } ?>
     </div>
 </div>
 <div class="mb-3">
@@ -98,26 +100,23 @@
     var formData = new FormData();
 
     function previewImages(event) {
-        var container = document.getElementById('imagePreviewContainer');
-        container.innerHTML = '';
-        if (event.target.files) {
-            for (var i = 0; i < event.target.files.length; i++) {
-                formData.append('imageFiles[]', event.target.files[i]);
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var image = document.createElement('img');
-                    image.src = e.target.result;
-                    image.className = 'image-preview';
-                    image.style.display = 'block';
-                    image.style.height = '150px';
-                    image.style.marginBottom = '10px';
-                    image.style.marginRight = '10px';
-                    image.style.borderRadius = '5px';
-                    container.appendChild(image);
-                };
-                reader.readAsDataURL(event.target.files[i]);
-            }
-        }
+        // var container = document.getElementById('imagePreviewContainer');
+        // container.innerHTML = '';
+        formData.append('image', event.target.files[0]);
+        var preview = document.getElementById("imagePreview");
+
+        // Create a new FileReader instance
+        var reader = new FileReader();
+
+        // Set the image preview source
+        reader.onload = function(event) {
+            preview.src = event.target.result;
+        };
+
+        preview.style.display = "block";
+
+        // Read the image file as a data URL
+        reader.readAsDataURL(event.target.files[0]);
     }
 
     var characteristics = <?= json_encode($characteristics) ?>;

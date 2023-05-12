@@ -8,9 +8,9 @@
 <h2 class="text-center">Create Product</h2>
 <hr>
 <div class="mb-3">
-    <label for="imageFiles" class="form-label">Select Images:</label>
-    <input type="file" id="imageFiles" name="imageFiles[]" class="form-control" multiple onchange="previewImages(event)">
-    <div class="mt-2" id="imagePreviewContainer"></div>
+    <label for="imageFiles" class="form-label">Select Image:</label>
+    <input type="file" id="imageFiles" name="image" class="form-control" onchange="previewImages(event)">
+    <div class="mt-2" id="imagePreviewContainer"><img id='imagePreview' /></div>
 </div>
 <div class="mb-3">
     <label for="product_name" class="form-label">Product Name</label>
@@ -83,26 +83,22 @@
 <script>
     var formData = new FormData();
     function previewImages(event) {
-        var container = document.getElementById('imagePreviewContainer');
-        container.innerHTML = '';
-        if (event.target.files) {
-            for (var i = 0; i < event.target.files.length; i++) {
-                formData.append('imageFiles[]', event.target.files[i]);
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var image = document.createElement('img');
-                    image.src = e.target.result;
-                    image.className = 'image-preview';
-                    image.style.display = 'block';
-                    image.style.height = '150px';
-                    image.style.marginBottom = '10px';
-                    image.style.marginRight = '10px';
-                    image.style.borderRadius = '5px';
-                    container.appendChild(image);
-                };
-                reader.readAsDataURL(event.target.files[i]);
-            }
-        }
+        // var container = document.getElementById('imagePreviewContainer');
+        // container.innerHTML = '';
+        var preview = document.getElementById("imagePreview");
+            formData.append('image', event.target.files[0]);
+            // Create a new FileReader instance
+            var reader = new FileReader();
+
+            // Set the image preview source
+            reader.onload = function (event) {
+                preview.src = event.target.result;
+            };
+
+            preview.style.display = "block";
+
+            // Read the image file as a data URL
+            reader.readAsDataURL(event.target.files[0]);
     }
 
     var characteristics = [];
@@ -138,12 +134,12 @@
 
 
     function save() {
-        // console.log(characteristics);
+        console.log(characteristics);
         formData.append('product_name', $("#product_name").val());
         formData.append('price', $("#price").val());
         formData.append('manufacturer_id', $("#manufacturer_id").val());
         formData.append('rubrik_id', $("#rubrik_id").val());
-        formData.append('characteristics', characteristics);
+        formData.append('characteristics', JSON.stringify(characteristics));
         formData.append('count', $("#count").val());
         formData.append('description', $('#description').val());
         // var data = {

@@ -89,7 +89,7 @@ class SiteController extends Controller
         $models = Products::find()->all();
         $images = [];
         foreach($models as $model) {
-            $temp_images = Images::find()->where(['prod_id' => $model->product_id])->all();
+            $temp_images = Images::find()->where(['prod_id' => $model->product_id])->one();
             if(!empty($temp_images)){
                 $images[$model->product_id] = $temp_images;
             }

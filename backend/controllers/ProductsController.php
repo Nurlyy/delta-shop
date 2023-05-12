@@ -60,17 +60,38 @@ class ProductsController extends Controller
 
     public function actionUpdate()
     {
+        // return Yii::getAlias('@backend/web') . '/';
         $manufacturers = Manufacturers::find()->all();
         $rubriks = Rubrik::find()->all();
         $id = htmlentities($_GET['product_id']);
         $product = Products::find()->where(['product_id' => $id])->one();
-        $images = Images::find()->where(['prod_id' => $product->product_id])->all();
+        $images = Images::find()->where(['prod_id' => $product->product_id])->one();
         $characteristics = ProductCharacteristics::find()->where(['product_id' => $product->product_id])->asArray()->all();
         if (Yii::$app->request->isPost) {
             // var_dump('pass');exit;
             $db = Yii::$app->db;
             $transaction = $db->beginTransaction();
             try {
+                if (!empty($_FILES['image']['name'])) {
+                    $newImage = UploadedFile::getInstanceByName('image');
+                    // foreach ($newImages as $file) {
+                    // var_dump($file);exit;
+                    $image = Images::find()->where(['prod_id' => $product->product_id])->one();
+                    // return $oldImage;
+                    if (!$image) {
+                        $image = new Images();
+                    } else {
+                        if (file_exists(Yii::getAlias("@backend/web/uploads/{$image->path}"))) {
+                            unlink(Yii::getAlias("@backend/web/uploads/{$image->path}"));
+                        }
+                    }
+                    $filename = uniqid() . '.' . $newImage->extension;
+                    $newImage->saveAs('uploads/' . $filename);
+
+                    $image->path = $filename;
+                    $image->prod_id = $product->product_id; // Set the ID of the product the image belongs to
+                    $image->save();
+                }
                 $newImages = [];
                 if (isset($_POST['product_name'])) {
                     $product->product_name = htmlentities(Yii::$app->request->post('product_name'));
@@ -113,14 +134,14 @@ class ProductsController extends Controller
                     $deleted_characteristics = json_decode(Yii::$app->request->post('deleted_characteristics'));
                     // var_dump($deleted_characteristics);exit;
                     if (!empty($deleted_characteristics)) {
-                        if(gettype($deleted_characteristics) == 'integer'){
+                        if (gettype($deleted_characteristics) == 'integer') {
                             $ch = ProductCharacteristics::find()->where(['id' => htmlentities($deleted_characteristics)])->one();
                             // throw new Exception(isset($ch)?'true':'false');
                             // throw new Exception(htmlentities($deleted_characteristic));
                             if ($ch != null && !empty($ch)) {
                                 $ch->delete();
                             }
-                        }else{
+                        } else {
                             foreach ($deleted_characteristics as $deleted_characteristic) {
                                 // throw new Exception($deleted_characteristic);
                                 $ch = ProductCharacteristics::find()->where(['id' => htmlentities($deleted_characteristic)])->one();
@@ -153,18 +174,6 @@ class ProductsController extends Controller
                     $product->save();
                 }
 
-                if (!empty($_FILES['imageFiles']['name'])) {
-                    $newImages = UploadedFile::getInstancesByName('imageFiles');
-                    foreach ($newImages as $file) {
-                        // var_dump($file);exit;
-                        $image = new Images();
-                        $filename = uniqid() . '.' . $file->extension;
-                        $file->saveAs('uploads/' . $filename);
-                        $image->path = $filename;
-                        $image->prod_id = $product->product_id; // Set the ID of the product the image belongs to
-                        $image->save();
-                    }
-                }
 
 
                 $transaction->commit();
@@ -175,7 +184,7 @@ class ProductsController extends Controller
             }
         }
         return $this->render('update', [
-            'product' => $product, 'manufacturers' => $manufacturers, 'rubriks' => $rubriks, 'characteristics' => $characteristics, 'images' => $images,
+            'product' => $product, 'manufacturers' => $manufacturers, 'rubriks' => $rubriks, 'characteristics' => $characteristics, 'image' => $images,
         ]);
     }
 
@@ -236,18 +245,18 @@ class ProductsController extends Controller
                     $new_characteristics = json_decode(Yii::$app->request->post('characteristics'));
                     if ($new_characteristics != null && !empty($new_characteristics)) {
                         foreach ($new_characteristics as $new_characteristic) {
-                            if (isset($new_characteristic['id'])) {
-                                $ch = ProductCharacteristics::find()->where(['id' => $new_characteristic['id']])->one();
-                                $ch->key = $new_characteristic['key'];
-                                $ch->value = $new_characteristic['value'];
+                            if (isset($new_characteristic->id)) {
+                                $ch = ProductCharacteristics::find()->where(['id' => $new_characteristic->id])->one();
+                                $ch->key = $new_characteristic->key;
+                                $ch->value = $new_characteristic->value;
                                 if ($ch->validate()) {
                                     $ch->save();
                                 }
                             } else {
                                 $ch = new ProductCharacteristics();
                                 $ch->product_id = $product->product_id;
-                                $ch->key = $new_characteristic['key'];
-                                $ch->value = $new_characteristic['value'];
+                                $ch->key = $new_characteristic->key;
+                                $ch->value = $new_characteristic->value;
                                 if ($ch->validate()) {
                                     $ch->save();
                                 }
@@ -256,18 +265,18 @@ class ProductsController extends Controller
                     }
                 }
 
-                if (isset($_POST['deleted_characteristics'])) {
+                // if (isset($_POST['deleted_characteristics'])) {
 
-                    $deleted_characteristics = $_POST['deleted_characteristics'];
-                    foreach ($deleted_characteristics as $deleted_characteristic) {
-                        if (isset($deleted_characteristic['id'])) {
-                            $ch = ProductCharacteristics::find()->where(['product_id' => $deleted_characteristic])->one();
-                            if ($ch != null && !empty($ch)) {
-                                $ch->delete();
-                            }
-                        }
-                    }
-                }
+                //     $deleted_characteristics = $_POST['deleted_characteristics'];
+                //     foreach ($deleted_characteristics as $deleted_characteristic) {
+                //         if (isset($deleted_characteristic['id'])) {
+                //             $ch = ProductCharacteristics::find()->where(['product_id' => $deleted_characteristic])->one();
+                //             if ($ch != null && !empty($ch)) {
+                //                 $ch->delete();
+                //             }
+                //         }
+                //     }
+                // }
 
                 if (isset($_POST['price'])) {
                     $product->price = htmlentities(Yii::$app->request->post('price'));
@@ -285,25 +294,23 @@ class ProductsController extends Controller
                     $product->description = htmlentities(Yii::$app->request->post('description'));
                 }
 
-                // var_dump($product);exit;
-
                 if ($product->validate()) {
-
                     $product->save();
                 }
 
-                if (!empty($_FILES['imageFiles']['name'])) {
-                    $images = UploadedFile::getInstancesByName('imageFiles');
-                }
-                foreach ($images as $file) {
-                    // var_dump($file);exit;
+                if (!empty($_FILES['image']['name'])) {
+                    $newImage = UploadedFile::getInstanceByName('image');
                     $image = new Images();
-                    $filename = uniqid() . '.' . $file->extension;
-                    $file->saveAs('uploads/' . $filename);
+                    $filename = uniqid() . '.' . $newImage->extension;
+                    $newImage->saveAs('uploads/' . $filename);
                     $image->path = $filename;
                     $image->prod_id = $product->product_id; // Set the ID of the product the image belongs to
                     $image->save();
                 }
+
+                // var_dump($file);exit;
+
+
 
                 $transaction->commit();
                 return $this->redirect('/products');
