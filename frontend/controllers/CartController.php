@@ -247,8 +247,6 @@ class CartController extends Controller
                 $transaction->rollBack();
                 return $e->getMessage();
             }
-
-            // return $response;
         }
     }
 

@@ -3,6 +3,7 @@
 /** @var yii\web\View $this */
 
 use yii\bootstrap5\LinkPager;
+use yii\bootstrap5\Html;
 
 $this->title = 'My Yii Application';
 // var_dump($categories);exit;
@@ -71,7 +72,7 @@ $this->title = 'My Yii Application';
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="<?= isset($images[$model->product_id]) ? Yii::getAlias('@backend')."/web/uploads/".$images[$model->product_id]->path : "/assets/images/placeholder.png" ?>" alt="..." />
+                            <?= Html::img(isset($images[$model->product_id]) ? "@backend/web/uploads/{$images[$model->product_id]->path}" : "/assets/images/placeholder.png", ['class' => 'card-img-top']) ?>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
