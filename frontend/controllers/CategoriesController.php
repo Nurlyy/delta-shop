@@ -7,6 +7,7 @@ use common\models\Categories;
 use common\models\Rubrik;
 use common\models\Subcategories;
 use common\models\Products;
+use common\models\Images;
 
 class CategoriesController extends Controller
 {
@@ -83,10 +84,17 @@ class CategoriesController extends Controller
             }
             $products = $prods;
         }
+        $images = [];
+        foreach($products as $model) {
+            $temp_images = Images::find()->where(['prod_id' => $model->product_id])->one();
+            if(!empty($temp_images)){
+                $images[$model->product_id] = $temp_images;
+            }
+        }
 
         // var_dump($products);
         // exit;
 
-        return $this->render('category', ['categories' => $cats, 'subcategories' => $subcats, 'rubrics' => $rubs, 'models' => $products, 'tree' => $tree]);
+        return $this->render('category', ['categories' => $cats, 'subcategories' => $subcats, 'images'=> $images, 'rubrics' => $rubs, 'models' => $products, 'tree' => $tree]);
     }
 }
