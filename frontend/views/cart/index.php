@@ -3,6 +3,7 @@
 $subtotal = 0.0;
 $shipping = 0.0;
 $cartProducts = [];
+use yii\helpers\Html;
 
 // var_dump($products);exit;
 
@@ -20,7 +21,7 @@ $cartProducts = [];
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-md-4">
-                                <img src="https://via.placeholder.com/150" alt="Product image">
+                            <?= Html::img(isset($images[$product['product_id']]) ? "http://backend.test.localhost:8080/uploads/{$images[$product['product_id']]->path}" : "https://via.placeholder.com/150", ['class' => 'card-img']) ?>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="list-group-item-heading"><?= $product['product_name'] ?></h4>

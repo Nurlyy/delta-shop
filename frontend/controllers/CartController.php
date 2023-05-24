@@ -14,6 +14,7 @@ use yii\web\Controller;
 use GuzzleHttp\Psr7\Request;
 use Yii;
 use yii\web\NotFoundHttpException;
+use common\models\Images;
 
 class CartController extends Controller
 {
@@ -64,8 +65,15 @@ class CartController extends Controller
                 array_push($products, ($product));
             }
         }
+        $images = [];
+        foreach($products as $product) {
+            $temp_images = Images::find()->where(['prod_id' => $product['product_id']])->one();
+            if(!empty($temp_images)){
+                $images[$product['product_id']] = $temp_images;
+            }
+        }
 
-        return $this->render('index', ['cart' => $cart, 'cart_products' => $cart_products, 'products' => $products, 'paypal_url' => self::PAYPAL_URL]);
+        return $this->render('index', ['cart' => $cart, 'cart_products' => $cart_products, 'products' => $products, 'images'=>$images, 'paypal_url' => self::PAYPAL_URL]);
     }
 
     public function actionAddToCart()
@@ -281,6 +289,7 @@ class CartController extends Controller
                         if ($order->validate()) {
                             $order->save();
                             $transaction->commit();
+                            return $this->redirect("/orders/index");
                         }
                     }
                 }
