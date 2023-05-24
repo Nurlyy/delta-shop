@@ -16,7 +16,7 @@ $cartProducts = [];
                 <?php foreach ($products as $product) {
                     $subtotal += $product['price'] * $product['quantity'];
                     $cartProducts[$product['product_id']] = $product['quantity'];
-                    ?>
+                ?>
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-md-4">
@@ -35,7 +35,10 @@ $cartProducts = [];
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <p class="list-group-item-text">Quantity: <?= $product['quantity'] ?></p>
+                                        <p class="list-group-item-text">Quantity: <input onchange="changeQuantity(<?= $product['product_id'] ?>)" class="form-control text-center me-3" id="inputQuantity" type="num" value="<?= $product['quantity'] ?>" style="max-width: 3rem" /></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a style="cursor:pointer;" onclick="removeFromCart(<?= $product['product_id'] ?>)" class="btn btn-danger">Удалить</a>
                                     </div>
                                 </div>
                             </div>
@@ -84,6 +87,38 @@ $cartProducts = [];
             <script src="https://www.paypal.com/sdk/js?client-id=Adw_mAEAhasbOEJuqtLsd_gO12BUghQyIMtR6RMsBD2KAQeRgXfFvAP_bALcacem7_7exF3V3BYnodmG&currency=USD"></script>
             <div id="paypal-button-container"></div>
             <script>
+                function changeQuantity(id) {
+                    console.log("changequantity")
+                    var quantity = $("inputQuantity").val;
+                    quantity = $('#inputQuantity').val();
+                    $.ajax({
+                        url: '/cart/set-to-cart',
+                        type: 'POST',
+                        data: {
+                            product_id: id,
+                            product_quantity: quantity
+                        },
+                        success: function(data) {
+                            get_cart_count();
+                            window.location.reload();
+                            // console.log(data);
+                        }
+                    });
+                }
+                function removeFromCart(id){
+                    $.ajax({
+                        url: '/cart/remove-from-cart',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                        },
+                        success: function(data) {
+                            get_cart_count();
+                            window.location.reload();
+                            // console.log(data);
+                        }
+                    });
+                }
                 paypal.Buttons({
                     // Order is created on the server and the order id is returned
                     createOrder() {

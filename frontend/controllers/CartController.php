@@ -102,6 +102,49 @@ class CartController extends Controller
         }
     }
 
+    public function actionSetToCart()
+    {
+        // var_dump($_POST);exit;
+        $product_id = htmlentities($_POST['product_id']);
+        $product_quantity = htmlentities($_POST['product_quantity']);
+        // var_dump($product_id);exit;
+        $product = Products::find()->where(['product_id' => $product_id])->one();
+
+        $cart = Cart::find()->where(['user_id' => Yii::$app->user->identity->id])->one();
+        if ($cart == null) {
+            $cart = new Cart();
+            $cart->user_id = Yii::$app->user->identity->id;
+            $cart->save();
+        }
+        $cart_product = CartProduct::find()->where(['cart_id' => $cart->id, 'product_id' => $product->product_id])->one();
+        if ($cart_product == null) {
+            $cart_product = new CartProduct();
+            $cart_product->cart_id = $cart->id;
+            $cart_product->product_id = $product->product_id;
+        }
+
+        // return 'true';
+        if ($product_quantity > $product->count) {
+            return 'false';
+        }
+        $cart_product->product_count = $product_quantity;
+        if ($cart_product->product_count > $product->count) {
+            return 'false';
+        }
+        if ($cart_product->save()) {
+            return 'true';
+        }
+    }
+
+    public function actionRemoveFromCart(){
+        $id = $_POST['id'];
+        $cart = Cart::find()->where(['user_id' => Yii::$app->user->identity->id])->one();
+        $cart_product = CartProduct::find()->where(['cart_id' => $cart->id, 'product_id' => $id])->one();
+        if ($cart_product != null) {
+            $cart_product->delete();
+        }
+    }
+
     public function actionCreatePaypalOrder()
     {
         $post_data = json_decode(file_get_contents('php://input'), true);

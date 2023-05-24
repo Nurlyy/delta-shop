@@ -3,7 +3,7 @@
 // foreach ($ordersProducts['18'] as $oP) {
 // var_dump($oP);exit;
 // }
-
+use yii\helpers\Html;
 ?>
 
 <div class="container p-5 m-0">
@@ -20,17 +20,17 @@
                                 <li class="list-group-item" style="background-color:honeydew;">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <img src="https://via.placeholder.com/150" alt="Product image">
+                                        <?= Html::img(isset($images[$product['product_id']]) ? "http://backend.test.localhost:8080/uploads/{$images[$product['product_id']]->path}" : "https://via.placeholder.com/150", ['class' => 'card-img']) ?>
                                         </div>
                                         <div class="col-md-8">
                                             <h4 class="list-group-item-heading"><?= $product['product_name'] ?></h4>
                                             <p class="list-group-item-text"><?= $product['description'] ?></p>
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-12">
                                                     <p class="list-group-item-text">Quantity: <?= $product['count'] ?></p>
                                                 </div>
-                                                <div class="col-md-6 text-right">
-                                                    <p class="list-group-item-text">$<?= $product['price'] * $product['count'] ?></p>
+                                                <div class="col-md-12">
+                                                    <p class="list-group-item-text">Price: $<?= $product['price'] ?></p>
                                                 </div>
                                             </div>
                                         </div>

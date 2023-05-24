@@ -69,12 +69,12 @@
         flex-wrap: wrap;
     }
 
-    .image-preview {
+    #imagePreview {
         margin-right: 10px;
         margin-bottom: 10px;
     }
 
-    .image-preview img {
+    #imagePreview {
         display: block;
         height:250px !important;
     }

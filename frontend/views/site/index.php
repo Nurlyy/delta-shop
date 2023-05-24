@@ -72,7 +72,7 @@ $this->title = 'My Yii Application';
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <?= Html::img(isset($images[$model->product_id]) ? "@backend/web/uploads/{$images[$model->product_id]->path}" : "/assets/images/placeholder.png", ['class' => 'card-img-top']) ?>
+                            <?= Html::img(isset($images[$model->product_id]) ? "http://backend.test.localhost:8080/uploads/{$images[$model->product_id]->path}" : "/assets/images/placeholder.png", ['class' => 'card-img-top']) ?>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">

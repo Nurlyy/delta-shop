@@ -72,7 +72,7 @@ class ProductsController extends Controller
             $db = Yii::$app->db;
             $transaction = $db->beginTransaction();
             try {
-                if (!empty($_FILES['image']['name'])) {
+                if (!empty($_FILES['image'])) {
                     $newImage = UploadedFile::getInstanceByName('image');
                     // foreach ($newImages as $file) {
                     // var_dump($file);exit;

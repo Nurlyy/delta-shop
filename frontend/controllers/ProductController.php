@@ -10,6 +10,7 @@ use yii\web\Controller;
 use common\models\Manufacturers;
 use common\models\ProductCharacteristics;
 use common\models\Subcategories;
+use common\models\Images;
 
 class ProductController extends Controller
 {
@@ -39,12 +40,24 @@ class ProductController extends Controller
         $subcategory = Subcategories::find()->where(['subcategory_id' => $rubrik->subcategory_id])->one();
         $category = Categories::find()->where(['category_id' => $subcategory->category_id])->one();
         $manufacturer = Manufacturers::find()->where(['manufacturer_id' => $product->manufacturer_id])->one();
-        $characteristics = ProductCharacteristics::find()->where(['product_id'=>$product->product_id])->all();
+        $characteristics = ProductCharacteristics::find()->where(['product_id' => $product->product_id])->all();
         $products = Products::find()
             ->where(['rubrik_id' => $rubrik->rubrik_id])
             ->andWhere(['<>', 'product_id', $product_id])
             ->limit(4)
             ->all();
+        $images = [];
+        foreach ($products as $model) {
+            $temp_images = Images::find()->where(['prod_id' => $model->product_id])->one();
+            if (!empty($temp_images)) {
+                $images[$model->product_id] = $temp_images;
+            }
+        }
+        $tmp_image = Images::find()->where(['prod_id' => $product->product_id])->one();
+        if($tmp_image != null){
+            $images[$product_id] = $tmp_image;
+        }
+        // var_dump($images);exit;
         return $this->render('product', [
             'product' => $product,
             'products' => $products,
@@ -52,7 +65,8 @@ class ProductController extends Controller
             'rubrik' => $rubrik,
             'subcategory' => $subcategory,
             'category' => $category,
-            'characteristics' => $characteristics
+            'characteristics' => $characteristics,
+            'images' => $images,
         ]);
     }
 }
